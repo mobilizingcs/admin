@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mobilize">
+  <link rel="shortcut icon" href="assets/favicon.ico">
+  <title>Admin tool</title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.3/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+
+<body>
+
+<div class="container">
+ <div class="row">
+  <div class="page-header">
+   <h1>Admin Tool</h1>
+  </div>
+ </div> <!-- end row -->
+ <div class="col-md-2">
+   <ul class="nav nav-pills nav-stacked">
+     <li role="presentation" class="active"><a href="#">Summary</a></li>
+     <li role="presentation"><a href="#">Classes</a></li>
+     <li role="presentation"><a href="#">Users</a></li>
+     <li role="presentation"><a href="#">Audits</a></li>
+   </ul>
+ </div>
+ <div class="col-md-10" id="main">
+   <!-- SUMMARY SECTION -->
+   <div id="summary">
+   <div class="row">
+   <div class="row">
+     <div class="col-md-10">
+     <h2>Summary</h2>
+     </div>
+   </div>
+     <div class="col-md-5 well" id="campaign_summary">
+     <h4>Campaign Info</h4>
+     <p>Total Campaigns: <span id="campaign_count">0</span></p>
+     </div>
+     <div class="col-md-5 col-md-offset-1 well" id="activity_summary">
+     <h4>Recent Activity:</h4>
+     <table class="table table-bordered table-striped">
+      <th>API calls in the last 15 minutes</th>
+      <th>Count</th>
+      <tr><td>Total</td><td><span id="total_calls">0</span></td></tr>
+      <tr><td>Success</td><td><span id="success_calls">0</span></td></tr>
+      <tr><td>Failure</td><td><span id="failure_calls">0</span></td></tr>
+     </table>
+     </div>
+   </div>
+   </div>
+   <!-- END SUMMARY SECTION -->
+   <!-- CLASSES SECTION -->
+   <div id="classes" style="display:none;">
+   <div class="row">
+     <div class="col-md-10">
+     <h2>Classes</h2>
+     </div>
+     <div class="col-md-2">
+     <button type="button" class="btn btn-large btn-primary">Create New</button>
+     </div>
+   </div>
+   <div class="row">
+    <table id="class_table" class="display compact" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                <th>Name</th>
+                <th>URN</th>
+                <th>Member Count</th>
+                <th>Campaign Count</th>
+                <th>Edit Class</th>
+              </tr>
+          </thead>
+      </table>
+    </div> <!-- end row 2 (table) -->
+   </div>
+   <!-- END CLASSES SECTION -->
+   <!-- USER SECTION -->
+   <div id="users" style="display:none;">
+   <div class="row">
+     <div class="col-md-10">
+     <h2>Users</h2>
+     </div>
+     <div class="col-md-2">
+     <button type="button" class="btn btn-large btn-primary">New User</button>
+     </div>
+   </div>
+   <div class="row">
+    <table id="user_table" class="display compact" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                <th>Name</th>
+                <th>E-mail</th>
+              </tr>
+          </thead>
+      </table>
+    </div> <!-- end row 2 (table) -->
+   </div>
+   <!-- END USER SECTION -->
+   <!-- AUDIT SECTION -->
+   <div id="audits" style="display:none;">
+   <div class="row">
+     <div class="col-md-10">
+     <h2>Audits</h2>
+     </div>
+   </div>
+   <div class="row">
+    <table id="audits_table" class="display compact" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                <th>URI</th>
+                <th>timestamp</th>
+              </tr>
+          </thead>
+      </table>
+    </div> <!-- end row 2 (table) -->
+   </div>
+   <!-- END AUDITS SECTION -->
+ </div>
+</div> <!-- end container -->
+
+ <script src="assets/js/jquery-1.11.1.js"></script>
+ <script src="assets/js/jquery.cookie.js"></script>
+ <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+ <script src="assets/js/ohmage.js"></script>
+ <script src="assets/js/underscore.js"></script>
+ <script src="assets/js/app.js"></script>  
+ <script src="//cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js"></script>
+ <script src="assets/js/jquery.datatables.file-size.js"></script>
+ <script src="assets/js/bootstrap-multiselect.js"></script>
+</body>
+</html>
