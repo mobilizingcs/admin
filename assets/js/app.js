@@ -24,7 +24,7 @@ $(function() {
       var campaign_count = _.size(campaigns);
       $("#campaign_count").text(campaign_count);
     });
-    oh.audit.read({start_date: get15minutesago()}).done(function(audits){
+    oh.audit.read().done(function(audits){
       var audit_total_count = _.size(audits);
       $("#total_calls").text(audit_total_count);
       sf_counts = _.countBy(audits, function(x){
@@ -41,10 +41,9 @@ $(function() {
         //val.result = val.response.result;
         val.localtime = getLocalTime(val.timestamp);
         val.user = val.extra_data['user'] || 'N/A';
-        val.details_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['uuid']+'">Details</button>'
         return val;
         });
-      var audits_table = $('#audits_table').DataTable( {
+      audits_table = $('#audits_table').DataTable( {
        "data": audit_data,
        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
        "oSearch": {"sSearch": "",
@@ -55,8 +54,7 @@ $(function() {
         { "data": "localtime" },
         { "data": "uri"},
         { "data": "response.result" },
-        { "data": "user"},
-        { "data": "details_button" }
+        { "data": "user"}
        ]
       });     
     });
@@ -65,7 +63,7 @@ $(function() {
         val.urn=key;
         val.member_count = _.size(val.usernames);
         val.campaign_count = _.size(val.campaigns);
-        val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
+        val.edit_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
 
         return val;
       });
@@ -88,13 +86,11 @@ $(function() {
       user_data = $.map(user_list, function(val,key){
         val.username=key;
         val.email_address = val.email_address || "N/A";
-        if ( val.personal ) {
-          val.name = val.personal.first_name + " " + val.personal.last_name
-        } else {
-          val.name = "N/A"
-        }
+        val.name = getName(val);
         val.campaign_count = _.size(val.campaigns);
         val.class_count = _.size(val.classes);
+        val.edit_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#user-modal" data-uuid="'+val['username']+'">Edit</button>'
+
         //val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
         return val;
       });
@@ -111,7 +107,8 @@ $(function() {
         { "data": "permissions.admin" },
         { "data": "permissions.enabled" },
         { "data": "class_count" },
-        { "data": "campaign_count" }
+        { "data": "campaign_count" },
+        { "data": "edit_button" }
        ]
       });
     })
@@ -124,6 +121,22 @@ $(function() {
     hideAllExcept(clicked);
   });
 
+  $('#audits_table').on('click', 'tbody tr', function () {
+      var tr = $(this).closest('tr');
+      var row = audits_table.row( tr );
+  
+      if ( row.child.isShown() ) {
+          // This row is already open - close it
+          row.child.hide();
+          tr.removeClass('shown');
+      }
+      else {
+          // Open this row
+          row.child( audit_row(row.data()) ).show();
+          tr.addClass('shown');
+      }
+  });
+
   //helpers!
   function get15minutesago(){
     d = new Date();
@@ -134,6 +147,13 @@ $(function() {
     d = new Date(timestamp);
     return d.toLocaleTimeString();
   };
+  function getName(val){
+    if (val.personal) {
+      return val.personal.first_name + " " + val.personal.last_name
+    } else {
+      return "N/A"
+    }
+  }
   function hideAllExcept(showElement){
     $.each(["#summary", "#classes", "#users", '#audits'], function(i,v){
       $(v).hide();
@@ -152,4 +172,14 @@ $(function() {
       }
     return uuid;
   };
+  function audit_row(audit){
+      var row = $('<div/>').addClass('row').addClass("audit-row");
+        $.each(audit, function(key, value){
+          var el = $('<div />').addClass("col-sm-6").addClass("col-lg-4").appendTo(row);
+          el.append($("<h5/>")).text(key);
+          el.append(JSON.stringify(value));          
+        });
+      console.log(row);
+      return row;
+  }
 });
