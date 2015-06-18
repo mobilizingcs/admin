@@ -64,7 +64,7 @@
      <h2>Classes</h2>
      </div>
      <div class="col-md-2">
-     <button type="button" class="btn btn-large btn-primary">Create New</button>
+     <h2><button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#class-modal">Create New</button></h2>
      </div>
    </div>
    <div class="row">
@@ -73,8 +73,8 @@
               <tr>
                 <th>Name</th>
                 <th>URN</th>
-                <th>Member Count</th>
-                <th>Campaign Count</th>
+                <th>Users</th>
+                <th>Campaigns</th>
                 <th>Edit Class</th>
               </tr>
           </thead>
@@ -89,15 +89,20 @@
      <h2>Users</h2>
      </div>
      <div class="col-md-2">
-     <button type="button" class="btn btn-large btn-primary">New User</button>
+     <h2><button type="button" class="btn btn-large btn-primary">New User</button></h2>
      </div>
    </div>
    <div class="row">
     <table id="user_table" class="display compact" cellspacing="0" width="100%">
           <thead>
               <tr>
+                <th>Username</th>
                 <th>Name</th>
                 <th>E-mail</th>
+                <th>Admin</th>
+                <th>Enabled</th>
+                <th>Classes</th>
+                <th>Campaigns</th>
               </tr>
           </thead>
       </table>
@@ -115,8 +120,11 @@
     <table id="audits_table" class="display compact" cellspacing="0" width="100%">
           <thead>
               <tr>
+                <th>Time</th>
                 <th>URI</th>
-                <th>timestamp</th>
+                <th>Status</th>
+                <th>User</th>
+                <th>Details</th>
               </tr>
           </thead>
       </table>
@@ -125,6 +133,47 @@
    <!-- END AUDITS SECTION -->
  </div>
 </div> <!-- end container -->
+
+
+
+<div id="class-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+     <div class="modal-header">
+      <div class="row">
+        <div class="col-md-8">
+         <h4 class="modal-title" id="detail-modal-title">Add New Class</h4>
+        </div>
+        <div class="col-md-2">
+         <button type="button" class="btn btn-danger writer btn-block" style="display:hidden;" id='modal-delete'>Delete Class</button>
+        </div>
+      </div>
+      </div>
+     <div class="modal-body">
+      <form class="form-horizontal">
+       <div class="form-group">
+        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
+        <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
+       </div>
+       <div class="form-group">
+        <div class="col-md-6 col-md-offset-3" id="button-row">
+          <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
+          <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
+        </div>
+       </div>
+      </form>
+     </div>
+    </div>
+  </div>
+</div>
 
  <script src="assets/js/jquery-1.11.1.js"></script>
  <script src="assets/js/jquery.cookie.js"></script>

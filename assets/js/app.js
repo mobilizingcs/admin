@@ -36,15 +36,27 @@ $(function() {
       });
       $("#success_calls").text(sf_counts["success"]);
       $("#failure_calls").text(sf_counts["failure"]);
+        audit_data = $.map(audits, function(val,key){
+        val.uuid = uuid();
+        //val.result = val.response.result;
+        val.localtime = getLocalTime(val.timestamp);
+        val.user = val.extra_data['user'] || 'N/A';
+        val.details_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['uuid']+'">Details</button>'
+        return val;
+        });
       var audits_table = $('#audits_table').DataTable( {
-       "data": audits,
+       "data": audit_data,
        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
        "oSearch": {"sSearch": "",
         "bRegex": true
        },
+       "order": [[ 0, "desc" ]],
        "columns": [
-        { "data": "uri" },
-        { "data": "timestamp" }
+        { "data": "localtime" },
+        { "data": "uri"},
+        { "data": "response.result" },
+        { "data": "user"},
+        { "data": "details_button" }
        ]
       });     
     });
@@ -75,19 +87,31 @@ $(function() {
     oh.user.search().done(function(user_list){
       user_data = $.map(user_list, function(val,key){
         val.username=key;
+        val.email_address = val.email_address || "N/A";
+        if ( val.personal ) {
+          val.name = val.personal.first_name + " " + val.personal.last_name
+        } else {
+          val.name = "N/A"
+        }
+        val.campaign_count = _.size(val.campaigns);
+        val.class_count = _.size(val.classes);
         //val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
         return val;
       });
-      console.log(JSON.stringify(user_data))
-      var user_table = $('#user_table').DataTable( {
+      var user_table = $('#user_table').DataTable({
        "data": user_data,
        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
        "oSearch": {"sSearch": "",
         "bRegex": true
        },
        "columns": [
-        { "data": "username" }
-        //{ "data": "email_address" }
+        { "data": "username" },
+        { "data": "name" },
+        { "data": "email_address" },
+        { "data": "permissions.admin" },
+        { "data": "permissions.enabled" },
+        { "data": "class_count" },
+        { "data": "campaign_count" }
        ]
       });
     })
@@ -106,10 +130,26 @@ $(function() {
     d.setMinutes(d.getMinutes() - 15);
     return d.toISOString();
   };
+  function getLocalTime(timestamp){
+    d = new Date(timestamp);
+    return d.toLocaleTimeString();
+  };
   function hideAllExcept(showElement){
     $.each(["#summary", "#classes", "#users", '#audits'], function(i,v){
       $(v).hide();
       $(showElement).show();
     });
+  };
+  //uuid generator
+  function uuid() {
+   var uuid = "", i, random;
+   for (i = 0; i < 32; i++) {
+      random = Math.random() * 16 | 0;
+      if (i == 8 || i == 12 || i == 16 || i == 20) {
+         uuid += "-"
+      }
+        uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+      }
+    return uuid;
   };
 });
