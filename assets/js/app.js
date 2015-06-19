@@ -24,7 +24,7 @@ $(function() {
       var campaign_count = _.size(campaigns);
       $("#campaign_count").text(campaign_count);
     });
-    oh.audit.read().done(function(audits){
+    oh.audit.read({start_date: get15minutesago()}).done(function(audits){
       var audit_total_count = _.size(audits);
       $("#total_calls").text(audit_total_count);
       sf_counts = _.countBy(audits, function(x){
@@ -174,12 +174,11 @@ $(function() {
   };
   function audit_row(audit){
       var row = $('<div/>').addClass('row').addClass("audit-row");
+      var table = $('<table/>').addClass('table').appendTo(row);
+      table.append('<th>Key</th><th>Value</th>');
         $.each(audit, function(key, value){
-          var el = $('<div />').addClass("col-sm-6").addClass("col-lg-4").appendTo(row);
-          el.append($("<h5/>")).text(key);
-          el.append(JSON.stringify(value));          
+          table.append('<tr><td>'+key+'</td><td>'+JSON.stringify(value)+'</td></tr>');         
         });
-      console.log(row);
       return row;
   }
 });
