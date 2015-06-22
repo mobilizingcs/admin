@@ -90,8 +90,6 @@ $(function() {
         val.campaign_count = _.size(val.campaigns);
         val.class_count = _.size(val.classes);
         val.edit_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#user-modal" data-uuid="'+val['username']+'">Edit</button>'
-
-        //val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
         return val;
       });
       var user_table = $('#user_table').DataTable({
@@ -135,6 +133,16 @@ $(function() {
           row.child( audit_row(row.data()) ).show();
           tr.addClass('shown');
       }
+  });
+
+  $("#class_detail_toggle").on('click', function() {
+    $("#class_table_div").toggle();
+    $("#class_detail_div").toggle();
+    if ($(this).hasClass('btn-success')) {
+      $(this).text("New Class").addClass('btn-primary').removeClass('btn-success');
+    } else {
+      $(this).text("Back").removeClass('btn-primary').addClass('btn-success');
+    }
   });
 
   //helpers!
