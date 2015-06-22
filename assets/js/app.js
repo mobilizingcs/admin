@@ -147,6 +147,21 @@ $(function() {
     }
   });
 
+  $("#modal-user-save").on('click', function() {
+    //validate first, duh.
+    console.log('creating user...');
+    oh.user.create({
+      username: $("#modal-user-username").val(),
+      password: $("#modal-user-password").val(),
+      admin: $("#modal-user-admin").prop('checked'),
+      enabled: $("#modal-user-enabled").prop('checked'),
+      new_account: $("#modal-user-new-account").prop('checked'),
+      campaign_creation_privilege: $("#modal-user-create-campaigns").prop('checked')
+    }).done(function(){
+      alert("Successfully created user!")
+    });
+  });
+
   //helpers!
   function get15minutesago(){
     d = new Date();

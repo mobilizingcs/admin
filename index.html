@@ -82,7 +82,26 @@
       </table>
     </div>
     <div id="class_detail_div" style="display:none;">
-      <h3>Some Details</h3>
+      <form class="form-horizontal">
+       <div class="form-group">
+        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
+        <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
+       </div>
+       <div class="form-group">
+        <div class="col-md-6 col-md-offset-3" id="button-row">
+          <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
+          <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
+        </div>
+       </div>
+      </form>
     </div>
     </div> <!-- end row 2 (table) -->
    </div>
@@ -140,47 +159,6 @@
  </div>
 </div> <!-- end container -->
 
-
-
-<div id="class-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-     <div class="modal-header">
-      <div class="row">
-        <div class="col-md-8">
-         <h4 class="modal-title" id="detail-modal-title">Add New Class</h4>
-        </div>
-        <div class="col-md-2">
-         <button type="button" class="btn btn-danger writer btn-block" style="display:hidden;" id='modal-delete'>Delete Class</button>
-        </div>
-      </div>
-      </div>
-     <div class="modal-body">
-      <form class="form-horizontal">
-       <div class="form-group">
-        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn"></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
-        <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
-       </div>
-       <div class="form-group">
-        <div class="col-md-6 col-md-offset-3" id="button-row">
-          <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
-          <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
-        </div>
-       </div>
-      </form>
-     </div>
-    </div>
-  </div>
-</div>
-
 <div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -201,15 +179,56 @@
         <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-username"></div>
        </div>
        <div class="form-group">
+        <label for="modal-user-password" class="col-sm-3 control-label">Password</label>
+        <div class="col-sm-8"><input type="password" class="form-control writer" id="modal-user-password"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-user-password-confirm" class="col-sm-3 control-label">Confirm Password</label>
+        <div class="col-sm-8"><input type="password" class="form-control writer" id="modal-user-password-confirm"></div>
+       </div>
+       <div class="form-group">
         <label for="modal-user-email" class="col-sm-3 control-label">E-Mail Address</label>
         <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-email"></div>
        </div>
-       <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-admin" type="checkbox">Admin</label>
+       <div class="form-group">
+        <label for="modal-user-first-name" class="col-sm-3 control-label text-muted">First Name (personal)</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-first-name"></div>
        </div>
        <div class="form-group">
+        <label for="modal-user-last-name" class="col-sm-3 control-label text-muted">Last Name (personal)</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-last-name"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-user-org" class="col-sm-3 control-label text-muted">Organization (personal)</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-org"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-user-personal-id" class="col-sm-3 control-label text-muted">Personal ID (personal)</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-personal-id"></div>
+       </div>
+       <div class="row">
+       <div class="checkbox col-sm-3 col-sm-offset-3">
+        <label><input id="modal-user-enabled" type="checkbox" checked>Enabled?</label>
+       </div></div>
+       <div class="row">
+       <div class="checkbox col-sm-3 col-sm-offset-3">
+        <label><input id="modal-user-new-user" type="checkbox" checked>Force password change on login?</label>
+       </div></div>
+       <div class="row">
+       <div class="checkbox col-sm-3 col-sm-offset-3">
+        <label><input id="modal-user-create-campaigns" type="checkbox">Can create campaigns?</label>
+       </div></div>
+       <div class="row">
+       <div class="checkbox col-sm-3 col-sm-offset-3">
+        <label><input id="modal-user-create-classes" type="checkbox">Can setup classes?</label>
+       </div></div>
+       <div class="row">
+       <div class="checkbox col-sm-3 col-sm-offset-3">
+        <label><input id="modal-user-admin" type="checkbox">Admin</label>
+       </div></div>
+       <div class="form-group">
         <div class="col-md-6 col-md-offset-3" id="button-row">
-          <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
+          <button type="submit" class="btn btn-success writer" id='modal-user-save'>Save</button>
           <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
         </div>
        </div>
