@@ -41,6 +41,7 @@ $(function() {
         //val.result = val.response.result;
         val.localtime = getLocalTime(val.timestamp);
         val.user = val.extra_data['user'] || 'N/A';
+        val.resp_seconds = eval((val.responded_millis - val.received_millis) / 1000);
         return val;
         });
       audits_table = $('#audits_table').DataTable( {
@@ -54,7 +55,8 @@ $(function() {
         { "data": "localtime" },
         { "data": "uri"},
         { "data": "response.result" },
-        { "data": "user"}
+        { "data": "user"},
+        { "data": "resp_seconds"}
        ]
       });     
     });
