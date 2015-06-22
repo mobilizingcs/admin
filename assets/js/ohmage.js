@@ -190,7 +190,11 @@ function Ohmage(app, client){
 	}
 
 	oh.user.info = function(){
-		return oh.call("/user_info/read")
+		return oh.call("/user_info/read");
+	}
+
+	oh.user.delete = function(data){
+		return oh.call("/user/delete", data);
 	}
 
 	//@args user_list

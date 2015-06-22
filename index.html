@@ -109,8 +109,11 @@
    <!-- USER SECTION -->
    <div id="users" style="display:none;">
    <div class="row">
-     <div class="col-md-10">
+     <div class="col-md-8">
      <h2>Users</h2>
+     </div>
+     <div class="col-md-2">
+     <h2><button type="button" class="btn btn-large btn-danger" id="delete-users-btn">Delete Selected</button></h2>
      </div>
      <div class="col-md-2">
      <h2><button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#user-modal">New User</button></h2>
@@ -120,6 +123,7 @@
     <table id="user_table" class="display compact" cellspacing="0" width="100%">
           <thead>
               <tr>
+                <th></th>
                 <th>Username</th>
                 <th>Name</th>
                 <th>E-mail</th>
@@ -208,11 +212,11 @@
        </div>
        <div class="row">
        <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-enabled" type="checkbox" checked>Enabled?</label>
+        <label><input id="modal-user-enabled" type="checkbox">Enabled?</label>
        </div></div>
        <div class="row">
        <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-new-user" type="checkbox" checked>Force password change on login?</label>
+        <label><input id="modal-user-new-account" type="checkbox">Force password change on login?</label>
        </div></div>
        <div class="row">
        <div class="checkbox col-sm-3 col-sm-offset-3">
@@ -220,7 +224,11 @@
        </div></div>
        <div class="row">
        <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-create-classes" type="checkbox">Can setup classes?</label>
+        <label><input id="modal-user-create-classes" type="checkbox">Can create classes?</label>
+       </div></div>
+       <div class="row">
+       <div class="checkbox col-sm-3 col-sm-offset-3">
+        <label><input id="modal-user-setup-users" type="checkbox">Can setup users?</label>
        </div></div>
        <div class="row">
        <div class="checkbox col-sm-3 col-sm-offset-3">

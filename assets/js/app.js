@@ -66,7 +66,7 @@ $(function() {
         val.member_count = _.size(val.usernames);
         val.campaign_count = _.size(val.campaigns);
         val.edit_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
-
+        //val.delete_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
         return val;
       });
       var class_table = $('#class_table').DataTable( {
@@ -84,34 +84,7 @@ $(function() {
        ]
       });
     })
-    oh.user.search().done(function(user_list){
-      user_data = $.map(user_list, function(val,key){
-        val.username=key;
-        val.email_address = val.email_address || "N/A";
-        val.name = getName(val);
-        val.campaign_count = _.size(val.campaigns);
-        val.class_count = _.size(val.classes);
-        val.edit_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#user-modal" data-uuid="'+val['username']+'">Edit</button>'
-        return val;
-      });
-      var user_table = $('#user_table').DataTable({
-       "data": user_data,
-       "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
-       "oSearch": {"sSearch": "",
-        "bRegex": true
-       },
-       "columns": [
-        { "data": "username" },
-        { "data": "name" },
-        { "data": "email_address" },
-        { "data": "permissions.admin" },
-        { "data": "permissions.enabled" },
-        { "data": "class_count" },
-        { "data": "campaign_count" },
-        { "data": "edit_button" }
-       ]
-      });
-    })
+  createUserTable();
   });
 
   $("li a").click(function($this){
@@ -149,7 +122,6 @@ $(function() {
 
   $("#modal-user-save").on('click', function() {
     //validate first, duh.
-    console.log('creating user...');
     oh.user.create({
       username: $("#modal-user-username").val(),
       password: $("#modal-user-password").val(),
@@ -158,11 +130,114 @@ $(function() {
       new_account: $("#modal-user-new-account").prop('checked'),
       campaign_creation_privilege: $("#modal-user-create-campaigns").prop('checked')
     }).done(function(){
-      alert("Successfully created user!")
+      reloadUserTable();
+      $("#user-modal").modal('toggle');
     });
   });
 
+  $("#delete-users-btn").on('click', function(){
+    delete_selected_users();
+  })
+
+  $('#user-modal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    if(button.data('username')){
+      var tr = $(button).closest("tr");
+      var row = user_table.row(tr);
+      var data = row.data();
+      console.log(data);
+      insertUserData(data);
+    } else {
+      clearUserModal();
+    }
+  });
+
   //helpers!
+  function insertUserData(data) {
+    clearUserModal();
+    $("#modal-user-username").val(data.username).prop('disabled', true);
+    if (data.email_address != "N/A") {
+          $("#modal-user-email").val(data.email_address);
+    }
+    $("#modal-user-enabled").prop("checked", data.permissions.enabled);
+    $("#modal-user-admin").prop("checked", data.permissions.admin);
+    $("#modal-user-new-account").prop("checked", data.permissions.new_account);
+    $("#modal-user-create-campaigns").prop("checked", data.permissions.can_create_campaigns);
+    $("#modal-user-create-classes").prop("checked", data.permissions.can_create_classes);
+    $("#modal-user-setup-users").prop("checked", data.permissions.can_setup_users);
+    if (data.personal) {
+      $("#modal-user-first-name").val(data.personal.first_name);
+      $("#modal-user-last-name").val(data.personal.last_name);
+      $("#modal-user-org").val(data.personal.organization);
+      $("#modal-user-personal-id").val(data.personal.personal_id);
+    }
+  }
+  function clearUserModal(){
+    $("#user-modal .writer.form-control").val('').prop('disabled', false);
+    $("#user-modal :checkbox").prop("checked", false);
+  }
+  function delete_selected_users(){
+      if(!confirm("Are you sure you want to delete these users? This cannot be undone!")) return;
+      var delete_user_list = [];
+      $("tbody tr[role='row']").each(function(i){
+          var tr = $(this);
+          var row = user_table.row(tr);
+          var data = row.data();
+          var checkbox = tr.find(":checkbox");
+          if(checkbox.is(':checked')){
+            delete_user_list.push(data.username);
+          }
+      });
+      oh.user.delete({user_list: delete_user_list.toString()}).done(function(){
+        alert("Successfully delete users!");
+        reloadUserTable();
+      });
+  }
+  function userInfo(user_list) {
+    //this handles the manipulation from the user.search call
+    user_data = $.map(user_list, function(val,key){
+      val.checkbox = '<input type="checkbox" class="rowcheckbox">'
+      val.username=key;
+      val.email_address = val.email_address || "N/A";
+      val.name = getName(val);
+      val.campaign_count = _.size(val.campaigns);
+      val.class_count = _.size(val.classes);
+      val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#user-modal" data-username="'+val['username']+'">Edit</button>';
+      return val;
+    });
+    return user_data;  
+
+  }
+  function reloadUserTable() {
+    user_table.clear();
+    oh.user.search().done(function(user_list){
+      user_table.rows.add(userInfo(user_list));
+      user_table.draw();
+    });
+  }
+  function createUserTable(){
+    oh.user.search().done(function(user_list){
+      user_table = $('#user_table').DataTable({
+       "data": userInfo(user_list),
+       "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+       "oSearch": {"sSearch": "",
+        "bRegex": true
+       },
+       "order": [[ 1, "asc" ]],
+       "columns": [
+        { "data": 'checkbox'},
+        { "data": "username" },
+        { "data": "name" },
+        { "data": "email_address" },
+        { "data": "permissions.admin" },
+        { "data": "permissions.enabled" },
+        { "data": "class_count" },
+        { "data": "campaign_count" },
+        { "data": "edit_button" }
+       ]
+      });
+    });
+  };
   function get15minutesago(){
     d = new Date();
     d.setMinutes(d.getMinutes() - 15);
