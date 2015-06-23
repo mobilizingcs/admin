@@ -87,7 +87,7 @@ $(function() {
   createUserTable();
   });
 
-  $("li a").click(function($this){
+  $(".navs").click(function($this){
     clicked = "#" + this.text.toLowerCase();
     $("li").removeClass('active');
     $(this).parent().addClass("active");
@@ -154,9 +154,27 @@ $(function() {
     }
   });
 
-  $("#delete-users-btn").on('click', function(){
-    delete_selected_users();
-  })
+  $(".user-batch").on('click', function(){
+    if ($(this).hasClass('false')){
+      var state = false
+    } else {
+      var state = true
+    }
+    //this is so ugly.
+    if ($(this).hasClass('enabled_account')) {
+      batchUserUpdate('enabled', state);
+    } else if ($(this).hasClass('new_account')) {
+      batchUserUpdate('new_account', state);
+    } else if ($(this).hasClass('campaign_creation_privilege')) {
+      batchUserUpdate('campaign_creation_privilege', state);
+    } else if ($(this).hasClass('class_creation_privilege')) {
+      batchUserUpdate('class_creation_privilege', state);
+    } else if ($(this).hasClass('user_setup_privilege')) {
+      batchUserUpdate('user_setup_privilege', state);
+    } else if ($(this).hasClass('delete')) {
+      delete_selected_users();
+    }
+  });
 
   $('#user-modal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
@@ -165,14 +183,70 @@ $(function() {
       var row = user_table.row(tr);
       var data = row.data();
       $("#user-modal-title").text('Edit User');
+      $("#user-modal-password-form").hide();
+      $("#modal-user-save").text("Update");
+      $("#ChangePwAccordion").show();     
       insertUserData(data);
     } else {
       clearUserModal();
+      $("#modal-user-new-account").prop("checked", true);
+      $("#modal-user-enabled").prop("checked", true);
       $("#user-modal-title").text('Add User');
+      $("#user-modal-password-form").show();
+      $("#modal-user-save").text("Create");
+      $("#ChangePwAccordion").hide();
     }
   });
 
+  $(".show-hide-pw").on('click', function(){
+    if ($(this).children('span').hasClass('glyphicon-eye-open')) {
+      $(this).children('span').removeClass('glyphicon-eye-open').addClass('glyphicon-eye-close');
+      $(this).prev(':input').prop("type", "text");
+    } else {
+      $(this).children('span').removeClass('glyphicon-eye-close').addClass('glyphicon-eye-open');
+      $(this).prev(':input').prop("type", "password");   
+    }
+  });
+
+  $("#modal-user-change-pw-submit").on('click', function(){
+    oh.user.whoami().done(function(admin_me){
+      oh.user.change_password({
+        user: admin_me,
+        username: $("#modal-user-username").val(),
+        password: $("#modal-user-change-pw-admin").val(),
+        new_password: $("#modal-user-change-pw-user").val()
+      }).done(function(){
+        alert("Successfully changed password");
+        $("#ChangePwCollapse").collapse('hide');
+        $("#modal-user-change-pw-admin").val('');
+        $("#modal-user-change-pw-user").val('');
+      });
+    });
+  });
+
   //helpers!
+  function getChecked() {
+    var user_list = [];
+    $("tbody tr[role='row']").each(function(i){
+        var tr = $(this);
+        var row = user_table.row(tr);
+        var data = row.data();
+        var checkbox = tr.find(":checkbox");
+        if(checkbox.is(':checked')){
+          user_list.push(data.username);
+        }
+    });
+    return user_list;
+  }
+  function batchUserUpdate(action, state) {
+    $.each(getChecked(), function(i,u){
+      oh.user.update({
+        username: u,
+        action: state
+      });
+    });
+  };
+
   function insertUserData(data) {
     clearUserModal();
     $("#modal-user-username").val(data.username).prop('disabled', true);
@@ -196,17 +270,7 @@ $(function() {
   }
   function delete_selected_users(){
       if(!confirm("Are you sure you want to delete these users? This cannot be undone!")) return;
-      var delete_user_list = [];
-      $("tbody tr[role='row']").each(function(i){
-          var tr = $(this);
-          var row = user_table.row(tr);
-          var data = row.data();
-          var checkbox = tr.find(":checkbox");
-          if(checkbox.is(':checked')){
-            delete_user_list.push(data.username);
-          }
-      });
-      oh.user.delete({user_list: delete_user_list.toString()}).done(function(){
+      oh.user.delete({user_list: getChecked().toString()}).done(function(){
         alert("Successfully delete users!");
         reloadUserTable();
       });
