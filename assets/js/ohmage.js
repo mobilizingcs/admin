@@ -210,6 +210,9 @@ function Ohmage(app, client){
 		return oh.call("/user/create", data)
 	}
 
+	oh.user.update = function(data){
+		return oh.call("/user/update", data)
+	}
 	//@args class_urn_list
 	//@args first_name
 	//@args last_name

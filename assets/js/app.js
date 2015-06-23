@@ -122,17 +122,36 @@ $(function() {
 
   $("#modal-user-save").on('click', function() {
     //validate first, duh.
-    oh.user.create({
-      username: $("#modal-user-username").val(),
-      password: $("#modal-user-password").val(),
-      admin: $("#modal-user-admin").prop('checked'),
-      enabled: $("#modal-user-enabled").prop('checked'),
-      new_account: $("#modal-user-new-account").prop('checked'),
-      campaign_creation_privilege: $("#modal-user-create-campaigns").prop('checked')
-    }).done(function(){
-      reloadUserTable();
-      $("#user-modal").modal('toggle');
-    });
+    if ($("#user-modal-title").text() == 'Add User') {
+      oh.user.create({
+        username: $("#modal-user-username").val(),
+        password: $("#modal-user-password").val(),
+        admin: $("#modal-user-admin").prop('checked'),
+        enabled: $("#modal-user-enabled").prop('checked'),
+        new_account: $("#modal-user-new-account").prop('checked'),
+        campaign_creation_privilege: $("#modal-user-create-campaigns").prop('checked')
+      }).done(function(){
+        reloadUserTable();
+        $("#user-modal").modal('toggle');
+      });
+    } else {
+      oh.user.update({
+        username: $("#modal-user-username").val(),
+        admin: $("#modal-user-admin").prop('checked'),
+        enabled: $("#modal-user-enabled").prop('checked'),
+        new_account: $("#modal-user-new-account").prop('checked'),
+        campaign_creation_privilege: $("#modal-user-create-campaigns").prop('checked'),
+        first_name: $("#modal-user-first-name").val(),
+        last_name: $("#modal-user-last-name").val(),
+        organization: $("#modal-user-org").val(),  
+        personal_id: $("#modal-user-personal-id").val(),
+        user_setup_privilege: $("#modal-user-setup-users").prop('checked'),
+        class_creation_privilege: $("#modal-user-create-classes").prop('checked'),        
+      }).done(function(){
+        reloadUserTable();
+        $("#user-modal").modal('toggle');
+      })
+    }
   });
 
   $("#delete-users-btn").on('click', function(){
@@ -145,10 +164,11 @@ $(function() {
       var tr = $(button).closest("tr");
       var row = user_table.row(tr);
       var data = row.data();
-      console.log(data);
+      $("#user-modal-title").text('Edit User');
       insertUserData(data);
     } else {
       clearUserModal();
+      $("#user-modal-title").text('Add User');
     }
   });
 
@@ -156,9 +176,7 @@ $(function() {
   function insertUserData(data) {
     clearUserModal();
     $("#modal-user-username").val(data.username).prop('disabled', true);
-    if (data.email_address != "N/A") {
-          $("#modal-user-email").val(data.email_address);
-    }
+    $("#modal-user-email").val(data.email_address);
     $("#modal-user-enabled").prop("checked", data.permissions.enabled);
     $("#modal-user-admin").prop("checked", data.permissions.admin);
     $("#modal-user-new-account").prop("checked", data.permissions.new_account);
@@ -198,8 +216,14 @@ $(function() {
     user_data = $.map(user_list, function(val,key){
       val.checkbox = '<input type="checkbox" class="rowcheckbox">'
       val.username=key;
-      val.email_address = val.email_address || "N/A";
-      val.name = getName(val);
+      val.email_address = val.email_address || "";
+      if (!val.personal) {
+        val.personal = {};
+        val.personal.first_name = "";
+        val.personal.last_name = "";
+        val.personal.organization = "";
+        val.personal.personal_id = "";
+      }
       val.campaign_count = _.size(val.campaigns);
       val.class_count = _.size(val.classes);
       val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#user-modal" data-username="'+val['username']+'">Edit</button>';
@@ -227,7 +251,10 @@ $(function() {
        "columns": [
         { "data": 'checkbox'},
         { "data": "username" },
-        { "data": "name" },
+        { "data": "personal.first_name" },
+        { "data": "personal.last_name" },
+        { "data": "personal.organization" },
+        { "data": "personal.personal_id" },
         { "data": "email_address" },
         { "data": "permissions.admin" },
         { "data": "permissions.enabled" },
@@ -247,13 +274,6 @@ $(function() {
     d = new Date(timestamp);
     return d.toLocaleTimeString();
   };
-  function getName(val){
-    if (val.personal) {
-      return val.personal.first_name + " " + val.personal.last_name
-    } else {
-      return "N/A"
-    }
-  }
   function hideAllExcept(showElement){
     $.each(["#summary", "#classes", "#users", '#audits'], function(i,v){
       $(v).hide();
