@@ -424,13 +424,9 @@ $(function() {
        "data": class_detail_data,
        "initComplete": function(){
          $(".role-button").on('click', function (){
-           
            roleUpdateButton(this);
          });
-         $(".class-remove-user-button").on('click', function(){
-
-         }
-       },
+        },
        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
        "oSearch": {"sSearch": "",
         "bRegex": true
