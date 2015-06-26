@@ -197,6 +197,16 @@ $(function() {
       fun();
     })
   };
+  function refreshUser(){
+    userSearch(function(){
+      userTable();
+    });
+  };
+  function refreshClass(){
+    classSearch(function(){
+      classTable();
+    })
+  };
   function campaignSearch(fun){
     oh.campaign.search().done(function(campaigns){
       campaign_count = _.size(campaigns);
@@ -234,40 +244,25 @@ $(function() {
   }
   function userSearch(fun){
     oh.user.search().done(function(user_list){
-      user_data = userInfo(user_list); // for some reason i already had this in a different function.
+      user_data = $.map(user_list, function(val,key){
+        val.checkbox = '<input type="checkbox" class="rowcheckbox">'
+        val.username=key;
+        val.email_address = val.email_address || "";
+        if (!val.personal) {
+          val.personal = {};
+          val.personal.first_name = "";
+          val.personal.last_name = "";
+          val.personal.organization = "";
+          val.personal.personal_id = "";
+        }
+        val.campaign_count = _.size(val.campaigns);
+        val.class_count = _.size(val.classes);
+        val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#user-modal" data-username="'+val['username']+'">Edit</button>';
+        return val;
+      });
       fun = fun || function(){ return true }
       fun();
     });
-  }
-  function refreshUser(){
-    userSearch(function(){
-      userTable();
-    });
-  };
-  function refreshClass(){
-    classSearch(function(){
-      classTable();
-    })
-  }
-  function userInfo(user_list) {
-    //this handles the manipulation from the user.search call
-    var user_data = $.map(user_list, function(val,key){
-      val.checkbox = '<input type="checkbox" class="rowcheckbox">'
-      val.username=key;
-      val.email_address = val.email_address || "";
-      if (!val.personal) {
-        val.personal = {};
-        val.personal.first_name = "";
-        val.personal.last_name = "";
-        val.personal.organization = "";
-        val.personal.personal_id = "";
-      }
-      val.campaign_count = _.size(val.campaigns);
-      val.class_count = _.size(val.classes);
-      val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#user-modal" data-username="'+val['username']+'">Edit</button>';
-      return val;
-    });
-    return user_data;
   }
   function userTable(){
     if (!$.fn.DataTable.isDataTable('#user_table')) {
