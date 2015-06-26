@@ -30,6 +30,14 @@ $(function() {
     });
   });
 
+  $(".navs").click(function(e){
+    e.preventDefault();
+    clicked = "#" + this.text.toLowerCase();
+    $("li").removeClass('active');
+    $(this).parent().addClass("active");
+    hideAllExcept(clicked);
+  });
+
   $("#refresh_button").click(function(){
     $(this).addClass("gly-spin");
     reloadData(function(){
@@ -40,14 +48,6 @@ $(function() {
       $("#refresh_button").removeClass("gly-spin");
     });
   })
-
-  $(".navs").click(function(e){
-    e.preventDefault();
-    clicked = "#" + this.text.toLowerCase();
-    $("li").removeClass('active');
-    $(this).parent().addClass("active");
-    hideAllExcept(clicked);
-  });
 
   $('#audits_table').on('click', 'tbody tr', function () {
       var tr = $(this).closest('tr');
