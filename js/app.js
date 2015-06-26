@@ -32,8 +32,8 @@ $(function() {
 
   $(".navs").click(function(e){
     e.preventDefault();
-    clicked = "#" + this.text.toLowerCase();
-    $("li").removeClass('active');
+    var clicked = "#" + this.text.toLowerCase();
+    $(".navs").removeClass('active');
     $(this).parent().addClass("active");
     hideAllExcept(clicked);
   });
