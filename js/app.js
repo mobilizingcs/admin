@@ -7,7 +7,7 @@ oh.callback("done", function(x, status, req){
 
 //global error handler. In ohmage 200 means unauthenticated
 oh.callback("error", function(msg, code, req){
-	(code == 200) ? window.location.replace("../web/#login") : alert("Error!\n" + msg);
+	(code == 200) ? window.location.replace("/login.html") : alert("Error!\n" + msg);
 });
 
 //main app
@@ -39,7 +39,8 @@ $(function() {
     });
   })
 
-  $(".navs").click(function($this){
+  $(".navs").click(function(e){
+    e.preventDefault();
     clicked = "#" + this.text.toLowerCase();
     $("li").removeClass('active');
     $(this).parent().addClass("active");
@@ -59,7 +60,8 @@ $(function() {
       }
   });
 
-  $("#class_detail_toggle").on('click', function(event) {
+  $("#class_detail_toggle").on('click', function(e) {
+    e.preventDefault();
     $("#class_table_div").toggle();
     $("#class_detail_div").toggle();
     if ($(this).hasClass('btn-success')) {
@@ -70,7 +72,8 @@ $(function() {
     }
   });
 
-  $("#modal-user-save").on('click', function() {
+  $("#modal-user-save").on('click', function(e) {
+    e.preventDefault();
     //validate first, duh.
     if ($("#user-modal-title").text() == 'Add User') {
       oh.user.create({
@@ -159,7 +162,8 @@ $(function() {
     }
   });
 
-  $("#modal-user-change-pw-submit").on('click', function(){
+  $("#modal-user-change-pw-submit").on('click', function(e){
+    e.preventDefault();
     oh.user.whoami().done(function(admin_me){
       oh.user.change_password({
         user: admin_me,
