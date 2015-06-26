@@ -249,55 +249,6 @@ $(function() {
       classTable();
     })
   }
-  function getChecked() {
-    var user_list = [];
-    $("tbody tr[role='row']").each(function(i){
-        var tr = $(this);
-        var row = user_table.row(tr);
-        var data = row.data();
-        var checkbox = tr.find(":checkbox");
-        if(checkbox.is(':checked')){
-          user_list.push(data.username);
-        }
-    });
-    return user_list;
-  }
-  function batchUserUpdate(action, state) {
-    $.each(getChecked(), function(i,u){
-      oh.user.update({
-        username: u,
-        action: state
-      });
-    });
-  };
-  function insertUserData(data) {
-    clearUserModal();
-    $("#modal-user-username").val(data.username).prop('disabled', true);
-    $("#modal-user-email").val(data.email_address);
-    $("#modal-user-enabled").prop("checked", data.permissions.enabled);
-    $("#modal-user-admin").prop("checked", data.permissions.admin);
-    $("#modal-user-new-account").prop("checked", data.permissions.new_account);
-    $("#modal-user-create-campaigns").prop("checked", data.permissions.can_create_campaigns);
-    $("#modal-user-create-classes").prop("checked", data.permissions.can_create_classes);
-    $("#modal-user-setup-users").prop("checked", data.permissions.can_setup_users);
-    if (data.personal) {
-      $("#modal-user-first-name").val(data.personal.first_name);
-      $("#modal-user-last-name").val(data.personal.last_name);
-      $("#modal-user-org").val(data.personal.organization);
-      $("#modal-user-personal-id").val(data.personal.personal_id);
-    }
-  }
-  function clearUserModal(){
-    $("#user-modal .writer.form-control").val('').prop('disabled', false);
-    $("#user-modal :checkbox").prop("checked", false);
-  }
-  function delete_selected_users(){
-      if(!confirm("Are you sure you want to delete these users? This cannot be undone!")) return;
-      oh.user.delete({user_list: getChecked().toString()}).done(function(){
-        alert("Successfully delete users!");
-        userTable;
-      });
-  }
   function userInfo(user_list) {
     //this handles the manipulation from the user.search call
     var user_data = $.map(user_list, function(val,key){
@@ -448,6 +399,55 @@ $(function() {
       class_detail_table.draw();
     }
     });
+  }
+  function getChecked() {
+    var user_list = [];
+    $("tbody tr[role='row']").each(function(i){
+        var tr = $(this);
+        var row = user_table.row(tr);
+        var data = row.data();
+        var checkbox = tr.find(":checkbox");
+        if(checkbox.is(':checked')){
+          user_list.push(data.username);
+        }
+    });
+    return user_list;
+  }
+  function batchUserUpdate(action, state) {
+    $.each(getChecked(), function(i,u){
+      oh.user.update({
+        username: u,
+        action: state
+      });
+    });
+  };
+  function insertUserData(data) {
+    clearUserModal();
+    $("#modal-user-username").val(data.username).prop('disabled', true);
+    $("#modal-user-email").val(data.email_address);
+    $("#modal-user-enabled").prop("checked", data.permissions.enabled);
+    $("#modal-user-admin").prop("checked", data.permissions.admin);
+    $("#modal-user-new-account").prop("checked", data.permissions.new_account);
+    $("#modal-user-create-campaigns").prop("checked", data.permissions.can_create_campaigns);
+    $("#modal-user-create-classes").prop("checked", data.permissions.can_create_classes);
+    $("#modal-user-setup-users").prop("checked", data.permissions.can_setup_users);
+    if (data.personal) {
+      $("#modal-user-first-name").val(data.personal.first_name);
+      $("#modal-user-last-name").val(data.personal.last_name);
+      $("#modal-user-org").val(data.personal.organization);
+      $("#modal-user-personal-id").val(data.personal.personal_id);
+    }
+  }
+  function clearUserModal(){
+    $("#user-modal .writer.form-control").val('').prop('disabled', false);
+    $("#user-modal :checkbox").prop("checked", false);
+  }
+  function delete_selected_users(){
+      if(!confirm("Are you sure you want to delete these users? This cannot be undone!")) return;
+      oh.user.delete({user_list: getChecked().toString()}).done(function(){
+        alert("Successfully delete users!");
+        userTable;
+      });
   }
   function roleUpdateButton(el){
     var button = el;
