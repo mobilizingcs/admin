@@ -7,7 +7,7 @@ oh.callback("done", function(x, status, req){
 
 //global error handler. In ohmage 200 means unauthenticated
 oh.callback("error", function(msg, code, req){
-	(code == 200) ? window.location.replace("/login.html") : alert("Error!\n" + msg);
+	(code == 200) ? window.location.replace("../web/#login") : alert("Error!\n" + msg);
 });
 
 //main app
@@ -172,7 +172,6 @@ $(function() {
   });
 
   //helpers!
-<<<<<<< HEAD
   function createSummary(){
     $("#campaign_count").text(campaign_count);
     var audit_total_count = _.size(audit_data);
@@ -208,7 +207,6 @@ $(function() {
       fun();
     });
   };
-=======
   function getChecked() {
     var user_list = [];
     $("tbody tr[role='row']").each(function(i){
@@ -230,8 +228,6 @@ $(function() {
       });
     });
   };
-
->>>>>>> cebb580297482f93a50d35eaab73009fb6065a98
   function insertUserData(data) {
     clearUserModal();
     $("#modal-user-username").val(data.username).prop('disabled', true);
@@ -353,7 +349,6 @@ $(function() {
       class_table.draw();
     }
     });
-<<<<<<< HEAD
   };
   function createClassTable(){
     class_table = $('#class_table').DataTable( {
@@ -387,7 +382,6 @@ $(function() {
        { "data": "resp_seconds"}
       ]
     }); 
-=======
   }
   function auditsTable(audit_data){
     if (!$.fn.DataTable.isDataTable('#audits_table')) {
@@ -494,7 +488,6 @@ $(function() {
      data.role = new_role;
      $(button).text(new_role);
     });
->>>>>>> cebb580297482f93a50d35eaab73009fb6065a98
   }
   function get15minutesago(){
     d = new Date();
