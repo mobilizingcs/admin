@@ -7,84 +7,29 @@ oh.callback("done", function(x, status, req){
 
 //global error handler. In ohmage 200 means unauthenticated
 oh.callback("error", function(msg, code, req){
-	(code == 200) ? window.location.replace("../web/#login") : alert("Error!\n" + msg);
+	(code == 200) ? window.location.replace("/login.html") : alert("Error!\n" + msg);
 });
 
 //main app
 $(function() {
+  var campaign_count;
+  var audit_data;
+  var class_data;
   oh.user.whoami().done(function(username){
     oh.keepalive();
     oh.user.info().done(function(x){
       if (x[username]['permissions']['is_admin'] == false) {
         alert('This tool is only available for administrators. You will now be redirected...');
         window.location.replace("/");
+      } else {
+        reloadData(function(){
+          createSummary();
+          createUserTable();
+          createAuditTable();
+          createClassTable();
+        });
       }
     });
-    oh.campaign.search().done(function(campaigns){
-      var campaign_count = _.size(campaigns);
-      $("#campaign_count").text(campaign_count);
-    });
-    oh.audit.read({start_date: get15minutesago()}).done(function(audits){
-      var audit_total_count = _.size(audits);
-      $("#total_calls").text(audit_total_count);
-      sf_counts = _.countBy(audits, function(x){
-        if (x.response.result == "success") {
-          return 'success';
-        } else {
-          return 'failure';
-        }
-      });
-      $("#success_calls").text(sf_counts["success"]);
-      $("#failure_calls").text(sf_counts["failure"]);
-        audit_data = $.map(audits, function(val,key){
-        val.uuid = uuid();
-        //val.result = val.response.result;
-        val.localtime = getLocalTime(val.timestamp);
-        val.user = val.extra_data['user'] || 'N/A';
-        val.resp_seconds = eval((val.responded_millis - val.received_millis) / 1000);
-        return val;
-        });
-      audits_table = $('#audits_table').DataTable( {
-       "data": audit_data,
-       "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
-       "oSearch": {"sSearch": "",
-        "bRegex": true
-       },
-       "order": [[ 0, "desc" ]],
-       "columns": [
-        { "data": "localtime" },
-        { "data": "uri"},
-        { "data": "response.result" },
-        { "data": "user"},
-        { "data": "resp_seconds"}
-       ]
-      });     
-    });
-    oh.class.search().done(function(class_list){
-      class_data = $.map(class_list, function(val,key){
-        val.urn=key;
-        val.member_count = _.size(val.usernames);
-        val.campaign_count = _.size(val.campaigns);
-        val.edit_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
-        //val.delete_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
-        return val;
-      });
-      var class_table = $('#class_table').DataTable( {
-       "data": class_data,
-       "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
-       "oSearch": {"sSearch": "",
-        "bRegex": true
-       },
-       "columns": [
-        { "data": "name" },
-        { "data": "urn" },
-        { "data": "member_count" },
-        { "data": "campaign_count" },
-        { "data": "edit_button" }
-       ]
-      });
-    })
-  createUserTable();
   });
 
   $("li a").click(function($this){
@@ -97,14 +42,11 @@ $(function() {
   $('#audits_table').on('click', 'tbody tr', function () {
       var tr = $(this).closest('tr');
       var row = audits_table.row( tr );
-  
-      if ( row.child.isShown() ) {
-          // This row is already open - close it
+      if ( row.child.isShown() ) { //row is open, close.
           row.child.hide();
           tr.removeClass('shown');
       }
-      else {
-          // Open this row
+      else { // open row
           row.child( audit_row(row.data()) ).show();
           tr.addClass('shown');
       }
@@ -153,6 +95,41 @@ $(function() {
   });
 
   //helpers!
+  function createSummary(){
+    $("#campaign_count").text(campaign_count);
+    var audit_total_count = _.size(audit_data);
+    $("#total_calls").text(audit_total_count);
+      sf_counts = _.countBy(audit_data, function(x){
+        r = x.response.result == "success" ? 'success' : 'failure';
+        return r;
+      });
+    $("#success_calls").text(sf_counts["success"]);
+    $("#failure_calls").text(sf_counts["failure"]);
+  };
+  function reloadData(fun){
+    oh.campaign.search().done(function(campaigns){
+      campaign_count = _.size(campaigns);
+    });
+    oh.class.search().done(function(class_list){
+      class_data = $.map(class_list, function(val,key){
+        val.urn=key;
+        val.member_count = _.size(val.usernames);
+        val.campaign_count = _.size(val.campaigns);
+        val.edit_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
+        return val;
+      });
+    });
+    oh.audit.read({start_date: get15minutesago()}).done(function(audits){
+      audit_data = $.map(audits, function(val,key){
+        val.uuid = uuid();
+        val.localtime = getLocalTime(val.timestamp);
+        val.user = val.extra_data['user'] || 'N/A';
+        val.resp_seconds = eval((val.responded_millis - val.received_millis) / 1000);
+        return val;
+      });
+      fun();
+    });
+  };
   function insertUserData(data) {
     clearUserModal();
     $("#modal-user-username").val(data.username).prop('disabled', true);
@@ -238,6 +215,39 @@ $(function() {
       });
     });
   };
+  function createClassTable(){
+    class_table = $('#class_table').DataTable( {
+     "data": class_data,
+     "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+     "oSearch": {"sSearch": "",
+      "bRegex": true
+     },
+     "columns": [
+      { "data": "name" },
+      { "data": "urn" },
+      { "data": "member_count" },
+      { "data": "campaign_count" },
+      { "data": "edit_button" }
+     ]
+    });
+  }
+  function createAuditTable(){
+    audits_table = $('#audits_table').DataTable({
+      "data": audit_data,
+      "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+      "oSearch": {"sSearch": "",
+       "bRegex": true
+      },
+      "order": [[ 0, "desc" ]],
+      "columns": [
+       { "data": "localtime" },
+       { "data": "uri"},
+       { "data": "response.result" },
+       { "data": "user"},
+       { "data": "resp_seconds"}
+      ]
+    }); 
+  }
   function get15minutesago(){
     d = new Date();
     d.setMinutes(d.getMinutes() - 15);
