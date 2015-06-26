@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="//cdn.datatables.net/1.10.3/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="assets/css/bootstrap-chosen.css">
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
 
@@ -19,16 +20,20 @@
 
 <div class="container">
  <div class="row">
-  <div class="page-header">
-   <h1>Admin Tool</h1>
+   <div class="page-header">
+     <h1>
+       <span>Admin Tool</span>
+       <span class="glyphicon glyphicon-refresh pull-right" id="refresh_button"/>
+     </h1>
   </div>
  </div> <!-- end row -->
+ <div class="row">
  <div class="col-md-2">
    <ul class="nav nav-pills nav-stacked">
-     <li role="presentation" class="active"><a href="#">Summary</a></li>
-     <li role="presentation"><a href="#">Classes</a></li>
-     <li role="presentation"><a href="#">Users</a></li>
-     <li role="presentation"><a href="#">Audits</a></li>
+     <li role="presentation" class="active"><a href="#" class="navs">Summary</a></li>
+     <li role="presentation"><a href="#" class="navs" >Classes</a></li>
+     <li role="presentation"><a href="#" class="navs" >Users</a></li>
+     <li role="presentation"><a href="#" class="navs" >Audits</a></li>
    </ul>
  </div>
  <div class="col-md-10" id="main">
@@ -64,7 +69,11 @@
      <h2>Classes</h2>
      </div>
      <div class="col-md-2">
-     <h2><button type="button" class="btn btn-large btn-primary" id='class_detail_toggle'>New Class</button></h2>
+     <div class="pull-right">
+     <h2>
+       <button type="button" class="btn btn-large btn-primary" id='class_detail_toggle'>New Class</button>
+     </h2>
+     </div>
      </div>
    </div>
    <div class="row">
@@ -84,12 +93,12 @@
     <div id="class_detail_div" style="display:none;">
       <form class="form-horizontal">
        <div class="form-group">
-        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
+        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn" disabled></div>
        </div>
        <div class="form-group">
-        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn"></div>
+        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
        </div>
        <div class="form-group">
         <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
@@ -98,10 +107,19 @@
        <div class="form-group">
         <div class="col-md-6 col-md-offset-3" id="button-row">
           <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
-          <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
         </div>
        </div>
       </form>
+      <table id="class_detail_table" class="display compact" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th></th>
+            <th>User</th>
+            <th>Role</th>
+            <th>Remove from Class</th>
+          </tr>
+        </thead>
+      </table>
     </div>
     </div> <!-- end row 2 (table) -->
    </div>
@@ -112,11 +130,30 @@
      <div class="col-md-8">
      <h2>Users</h2>
      </div>
-     <div class="col-md-2">
-     <h2><button type="button" class="btn btn-large btn-danger" id="delete-users-btn">Delete Selected</button></h2>
+     <div class="col-md-4">
+     <div class="pull-right">
+     <h2>
+       <div class="btn-group">
+         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret" /></button>
+         <ul class="dropdown-menu">
+           <li><a href="#" class="user-batch enabled_account">Enable</a></li>
+           <li><a href="#" class="user-batch enabled_account false">Disable</a></li>
+           <li><a href="#" class="user-batch new_account">Force Password Change</a></li>
+           <li><a href="#" class="user-batch new_account false">Don't Force Password Change</a></li>
+           <li role="separator" class="divider"></li>
+           <li><a href="#" class="user-batch campaign_creation_privilege ">Allow create campaigns</a></li>
+           <li><a href="#" class="user-batch campaign_creation_privilege false">Disallow create campaigns</a></li>
+           <li><a href="#" class="user-batch class_creation_privilege">Allow create classes</a></li>
+           <li><a href="#" class="user-batch class_creation_privilege false">Disallow create classes</a></li>
+           <li><a href="#" class="user-batch user_setup_privilege">Allow setup users</a></li>
+           <li><a href="#" class="user-batch user_setup_privilege false">Disallow setup users</a></li>
+           <li role="separator" class="divider"></li>
+           <li><a href="#" class="user-batch delete">Delete</a></li>
+         </ul>
+        </div>
+       <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#user-modal">New User</button>
+     </h2>
      </div>
-     <div class="col-md-2">
-     <h2><button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#user-modal">New User</button></h2>
      </div>
    </div>
    <div class="row">
@@ -125,7 +162,10 @@
               <tr>
                 <th></th>
                 <th>Username</th>
-                <th>Name</th>
+                <th>First</th>
+                <th>Last</th>
+                <th>Org</th>
+                <th>ID</th>
                 <th>E-mail</th>
                 <th>Admin</th>
                 <th>Enabled</th>
@@ -161,6 +201,7 @@
    </div>
    <!-- END AUDITS SECTION -->
  </div>
+ </div> <!-- row? -->
 </div> <!-- end container -->
 
 <div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -169,10 +210,7 @@
      <div class="modal-header">
       <div class="row">
         <div class="col-md-8">
-         <h4 class="modal-title" id="detail-modal-title">Add New User</h4>
-        </div>
-        <div class="col-md-2">
-         <button type="button" class="btn btn-danger writer btn-block" style="display:hidden;" id='modal-delete'>Delete User</button>
+         <h4 class="modal-title" id="user-modal-title">Add New User</h4>
         </div>
       </div>
       </div>
@@ -182,13 +220,14 @@
         <label for="modal-user-username" class="col-sm-3 control-label">Username</label>
         <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-username"></div>
        </div>
-       <div class="form-group">
+       <div class="form-group" id="user-modal-password-form">
         <label for="modal-user-password" class="col-sm-3 control-label">Password</label>
-        <div class="col-sm-8"><input type="password" class="form-control writer" id="modal-user-password"></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-user-password-confirm" class="col-sm-3 control-label">Confirm Password</label>
-        <div class="col-sm-8"><input type="password" class="form-control writer" id="modal-user-password-confirm"></div>
+        <div class="col-sm-8">
+          <div class="input-group-sm input-group">
+          <input type="password" class="form-control writer" id="modal-user-password">
+          <span class="input-group-addon show-hide-pw"><span class="glyphicon glyphicon-eye-open"></span></span>
+          </div>
+        </div>
        </div>
        <div class="form-group">
         <label for="modal-user-email" class="col-sm-3 control-label">E-Mail Address</label>
@@ -210,33 +249,143 @@
         <label for="modal-user-personal-id" class="col-sm-3 control-label text-muted">Personal ID (personal)</label>
         <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-user-personal-id"></div>
        </div>
-       <div class="row">
-       <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-enabled" type="checkbox">Enabled?</label>
-       </div></div>
-       <div class="row">
-       <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-new-account" type="checkbox">Force password change on login?</label>
-       </div></div>
-       <div class="row">
-       <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-create-campaigns" type="checkbox">Can create campaigns?</label>
-       </div></div>
-       <div class="row">
-       <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-create-classes" type="checkbox">Can create classes?</label>
-       </div></div>
-       <div class="row">
-       <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-setup-users" type="checkbox">Can setup users?</label>
-       </div></div>
-       <div class="row">
-       <div class="checkbox col-sm-3 col-sm-offset-3">
-        <label><input id="modal-user-admin" type="checkbox">Admin</label>
-       </div></div>
+       <div class="form-group">
+         <div class="col-sm-offset-3 col-sm-9">
+           <div class="checkbox">
+             <label>
+               <input id="modal-user-enabled" type="checkbox">Enabled?
+             </label>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+         <div class="col-sm-offset-3 col-sm-9">
+           <div class="checkbox">
+             <label>
+               <input id="modal-user-new-account" type="checkbox">Force password change?
+             </label>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+         <div class="col-sm-offset-3 col-sm-9">
+           <div class="checkbox">
+             <label>
+               <input id="modal-user-create-campaigns" type="checkbox">Can create campaigns?
+             </label>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+         <div class="col-sm-offset-3 col-sm-9">
+           <div class="checkbox">
+             <label>
+               <input id="modal-user-create-classes" type="checkbox">Can create classes?
+             </label>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+         <div class="col-sm-offset-3 col-sm-9">
+           <div class="checkbox">
+             <label>
+               <input id="modal-user-setup-users" type="checkbox">Can setup users?
+             </label>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+         <div class="col-sm-offset-3 col-sm-9">
+           <div class="checkbox">
+             <label>
+               <input id="modal-user-admin" type="checkbox">Admin?
+             </label>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+        <div class="col-md-4 col-md-offset-4" id="button-row">
+          <button type="submit" class="btn btn-success writer" id='modal-user-save'>Create</button>
+          <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
+        </div>
+       </div>
+      </form>
+        <div class="panel-group" id="ChangePwAccordion">
+          <div class="panel panel-default">
+            <div class="panel-heading" data-toggle="collapse" href="#ChangePwCollapse">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#ChangePwAccordion" href="#ChangePwCollapse"><span class="glyphicon glyphicon-chevron-down"></span> Change Password</a>
+              </h4>
+            </div>
+            <div id="ChangePwCollapse" class="panel-collapse collapse">
+              <div class="panel-body">
+                <form id="ChangePwForm" class="form-horizontal">
+                  <div class="form-group">
+                    <label class="col-md-5 control-label">Admin Password</label>
+                    <div class="col-md-6">
+                      <input type="password" class="form-control" id="modal-user-change-pw-admin" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-5 control-label">New Password for User</label>
+                    <div class="col-md-6">
+                      <div class="input-group-sm input-group">
+                        <input type="password" class="form-control writer" id="modal-user-change-pw-user" />
+                        <span class="input-group-addon show-hide-pw"><span class="glyphicon glyphicon-eye-open"></span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-md-5 col-md-offset-3">
+                      <button type="submit" class="btn btn-default" id="modal-user-change-pw-submit">Change</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+     </div>
+    </div>
+  </div>
+</div>
+
+<div id="class-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+     <div class="modal-header">
+      <div class="row">
+        <div class="col-md-8">
+         <h4 class="modal-title" id="class-modal-title">Add New Class</h4>
+        </div>
+      </div>
+      </div>
+     <div class="modal-body">
+      <form class="form-horizontal">
+       <div class="form-group">
+        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
+        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn"></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
+        <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-privileged" class="col-sm-3 control-label">Privileged Users</label>
+        <div class="col-sm-8">
+          <select multiple class="form-control writer chosen-select" id="modal-class-privileged">
+            <option>option1</option>
+            <option>option2</option>
+          </select>
+        </div>
+       </div>
        <div class="form-group">
         <div class="col-md-6 col-md-offset-3" id="button-row">
-          <button type="submit" class="btn btn-success writer" id='modal-user-save'>Save</button>
+          <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
           <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
         </div>
        </div>
@@ -253,7 +402,7 @@
  <script src="assets/js/underscore.js"></script>
  <script src="assets/js/app.js"></script>  
  <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
- <script src="assets/js/jquery.datatables.file-size.js"></script>
- <script src="assets/js/bootstrap-multiselect.js"></script>
+ <script src="assets/js/chosen.jquery.min.js"></script>
+
 </body>
 </html>
