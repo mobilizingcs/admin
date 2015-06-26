@@ -16,7 +16,9 @@ $(function() {
   var audit_data;
   var class_data;
   var user_data;
+  var me;
   oh.user.whoami().done(function(username){
+    me = username;
     oh.keepalive();
     oh.user.info().done(function(x){
       if (x[username]['permissions']['is_admin'] == false) {
@@ -109,11 +111,7 @@ $(function() {
   });
 
   $(".user-batch").on('click', function(){
-    if ($(this).hasClass('false')){
-      var state = false
-    } else {
-      var state = true
-    }
+    state = $(this).hasClass('false') ? false : true;
     //this is so ugly.
     if ($(this).hasClass('enabled_account')) {
       batchUserUpdate('enabled', state);
@@ -164,18 +162,16 @@ $(function() {
 
   $("#modal-user-change-pw-submit").on('click', function(e){
     e.preventDefault();
-    oh.user.whoami().done(function(admin_me){
-      oh.user.change_password({
-        user: admin_me,
-        username: $("#modal-user-username").val(),
-        password: $("#modal-user-change-pw-admin").val(),
-        new_password: $("#modal-user-change-pw-user").val()
-      }).done(function(){
-        alert("Successfully changed password");
-        $("#ChangePwCollapse").collapse('hide');
-        $("#modal-user-change-pw-admin").val('');
-        $("#modal-user-change-pw-user").val('');
-      });
+    oh.user.change_password({
+      user: me,
+      username: $("#modal-user-username").val(),
+      password: $("#modal-user-change-pw-admin").val(),
+      new_password: $("#modal-user-change-pw-user").val()
+    }).done(function(){
+      alert("Successfully changed password");
+      $("#ChangePwCollapse").collapse('hide');
+      $("#modal-user-change-pw-admin").val('');
+      $("#modal-user-change-pw-user").val('');
     });
   });
 
