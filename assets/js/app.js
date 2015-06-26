@@ -21,7 +21,6 @@ $(function() {
       if (x[username]['permissions']['is_admin'] == false) {
         alert('This tool is only available for administrators. You will now be redirected...');
         window.location.replace("/");
-<<<<<<< HEAD
       } else {
         reloadData(function(){
           createSummary();
@@ -31,11 +30,6 @@ $(function() {
         });
       }
     });
-=======
-      }
-    });
-  refreshAll();
->>>>>>> cebb580297482f93a50d35eaab73009fb6065a98
   });
 
   $("#refresh_button").click(function(){
