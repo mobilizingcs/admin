@@ -68,7 +68,7 @@ $(function() {
     $("#class_detail_div").toggle();
     if ($(this).hasClass('btn-success')) {
       $(this).text("New Class").addClass('btn-primary').removeClass('btn-success');
-      classTable();
+      refreshClass();
     } else {
       $(this).text("Back").removeClass('btn-primary').addClass('btn-success');
     }
@@ -243,6 +243,11 @@ $(function() {
     userSearch(function(){
       userTable();
     });
+  };
+  function refreshClass(){
+    classSearch(function(){
+      classTable();
+    })
   }
   function getChecked() {
     var user_list = [];
@@ -443,30 +448,6 @@ $(function() {
       class_detail_table.draw();
     }
     });
-  }
-  function refreshAll(){
-      oh.campaign.search().done(function(campaigns){
-        var campaign_count = _.size(campaigns);
-        $("#campaign_count").text(campaign_count);
-      });
-      oh.audit.read({start_date: get15minutesago()}).done(function(audits){
-        $("#total_calls").text(_.size(audits));
-        sf_counts = _.countBy(audits, function(x){
-          return (x.response.result == "success") ? "success" : "failure";
-        });
-        $("#success_calls").text(sf_counts["success"]);
-        $("#failure_calls").text(sf_counts["failure"]);
-        audit_data = $.map(audits, function(val,key){
-          val.uuid = uuid();
-          val.localtime = getLocalTime(val.timestamp);
-          val.user = val.extra_data['user'] || '';
-          val.resp_seconds = eval((val.responded_millis - val.received_millis) / 1000);
-          return val;
-        });
-        auditsTable(audit_data);    
-      });
-    classTable();
-    userTable();
   }
   function roleUpdateButton(el){
     var button = el;
