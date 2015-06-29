@@ -10,12 +10,14 @@ oh.callback("error", function(msg, code, req){
 	(code == 200) ? window.location.replace("/login.html") : alert("Error!\n" + msg);
 });
 
+
 //main app
 $(function() {
   var campaign_count;
   var audit_data;
   var class_data;
   var user_data;
+  var campaign_data;
   var me;
   oh.user.whoami().done(function(username){
     me = username;
@@ -62,7 +64,7 @@ $(function() {
       }
   });
 
-  $("#class_detail_toggle").on('click', function(e) {
+  $("#back-to-class").on('click', function(e) {
     e.preventDefault();
     $("#class_table_div").toggle();
     $("#class_detail_div").toggle();
@@ -71,8 +73,22 @@ $(function() {
       refreshClass();
     } else {
       $(this).text("Back").removeClass('btn-primary').addClass('btn-success');
+
     }
   });
+
+  $("#modal-new-class-save").click(function(e){
+    e.preventDefault();
+    oh.class.create({
+      class_urn: $("#modal-new-class-urn").val(),
+      class_name: $("#modal-new-class-name").val(),
+      description: $("#modal-new-class-description").val()
+    }).done(function(){
+      refreshClass();
+      $("#new-class-modal").modal('toggle');
+      emptyForm("#new-class-form");
+    })
+  })
 
   $("#modal-user-save").on('click', function(e) {
     e.preventDefault();
@@ -209,6 +225,11 @@ $(function() {
   };
   function campaignSearch(fun){
     oh.campaign.search().done(function(campaigns){
+      campaign_data = $.map(campaigns, function(val,key){
+        val.urn = key;
+        return val;
+      });
+      campaign_data = _.sortBy(campaign_data, function(v){ return v.name });
       campaign_count = _.size(campaigns);
       fun = fun || function(){ return true }
       fun();
@@ -298,13 +319,7 @@ $(function() {
       if (!$.fn.DataTable.isDataTable('#class_table')) {
       class_table = $('#class_table').DataTable( {
        "initComplete": function(){
-         $(".class-detail").on('click', function (event){
-           $("#class_table_div").toggle();
-           $("#class_detail_div").toggle();
-           classDetailTable($(this).data('urn'));
-           $("#modal-class-urn").val($(this).data('urn'));
-           $("#class_detail_toggle").text("Back").removeClass('btn-primary').addClass('btn-success');
-         });
+         registerClassDetail();
        },
        "data": class_data,
        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
@@ -323,6 +338,7 @@ $(function() {
       class_table.clear();
       class_table.rows.add(class_data);
       class_table.draw();
+      registerClassDetail();
     }
   };
   function auditsTable(){
@@ -355,7 +371,20 @@ $(function() {
       audits_table.draw();
     }
   }
-  function classDetailTable(urn){
+  function registerClassDetail(){
+    $(".class-detail").on('click', function (e){
+      e.preventDefault();
+      var urn = $(this).data('urn');
+      var class_details = dtDataFromButton($(this), class_table);
+      $("#class_table_div").toggle();
+      $("#class_detail_div").toggle();
+      $("#modal-class-urn").val(urn);
+      insertCampaignList(class_details);
+      classDetailTable(urn, class_details);
+      $("#class_detail_toggle").text("Back").removeClass('btn-primary').addClass('btn-success');
+    });
+  }
+  function classDetailTable(urn, details){
     oh.class.read({class_urn_list: urn}).done(function(data){
       class_detail_data = $.map(data[urn].users, function(i,v){
         var role_button = '<button type="button" class="btn btn-default btn-sm role-button">'+i+'</button>';
@@ -394,6 +423,17 @@ $(function() {
       class_detail_table.draw();
     }
     });
+  }
+  function insertCampaignList(details){
+    _.each(campaign_data, function(v){
+      var el = $(document.createElement("option")).appendTo($("#modal-class-campaigns"));
+      el.attr("value",v.urn);
+      el.text(v.name + " ("+v.urn+")");
+      if (_.contains(details.campaigns, v.urn)){
+        el.prop("selected", true);
+      }
+    })
+    $("#modal-class-campaigns").chosen({search_contains: true});
   }
   function getChecked() {
     var user_list = [];
@@ -458,6 +498,15 @@ $(function() {
      data.role = new_role;
      $(button).text(new_role);
     });
+  };
+  function emptyForm(formdiv){
+    $(formdiv).find("input[type=text], input[type=password], input[type=email], input[type=textarea]").val("");
+    $(formdiv).find("input[type=checkbox]").prop('checked', false);
+  }
+  function dtDataFromButton(button, table){
+    var tr = $(button).closest("tr");
+    var row = table.row(tr);
+    return row.data();
   }
   function get15minutesago(){
     d = new Date();

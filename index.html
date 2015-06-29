@@ -73,7 +73,7 @@
      <div class="col-md-2">
      <div class="pull-right">
      <h2>
-       <button type="button" class="btn btn-large btn-primary" id='class_detail_toggle'>New Class</button>
+       <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#new-class-modal">New Class</button>
      </h2>
      </div>
      </div>
@@ -105,6 +105,12 @@
        <div class="form-group">
         <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
         <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
+       </div>
+       <div class="form-group">
+        <label for="modal-class-campaigns" class="col-sm-3 control-label">Campaigns</label>
+        <div class="col-sm-8">
+          <select multiple class="form-control writer chosen-select" id="modal-class-campaigns"></select>
+        </div>
        </div>
        <div class="form-group">
         <div class="col-md-6 col-md-offset-3" id="button-row">
@@ -352,42 +358,37 @@
   </div>
 </div>
 
-<div id="class-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="new-class-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
      <div class="modal-header">
       <div class="row">
         <div class="col-md-8">
-         <h4 class="modal-title" id="class-modal-title">Add New Class</h4>
+         <h4 class="modal-title" id="new-class-modal-title">Add New Class</h4>
         </div>
       </div>
       </div>
-     <div class="modal-body">
+     <div class="modal-body" id="new-class-form">
       <form class="form-horizontal">
        <div class="form-group">
-        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn"></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
-        <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-privileged" class="col-sm-3 control-label">Privileged Users</label>
+        <label for="modal-new-class-urn" class="col-sm-3 control-label">URN</label>
         <div class="col-sm-8">
-          <select multiple class="form-control writer chosen-select" id="modal-class-privileged">
-            <option>option1</option>
-            <option>option2</option>
-          </select>
+          <input type="text" class="form-control writer" id="modal-new-class-urn">
         </div>
        </div>
        <div class="form-group">
-        <div class="col-md-6 col-md-offset-3" id="button-row">
-          <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
+        <label for="modal-new-class-name" class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control writer" id="modal-new-class-name">
+        </div>
+       </div>
+       <div class="form-group">
+        <label for="modal-new-class-description" class="col-sm-3 control-label">Description</label>
+        <div class="col-sm-8"><textarea type="textarea" class="form-control writer" id="modal-new-class-description"></textarea></div>
+       </div>
+       <div class="form-group">
+        <div class="col-md-4 col-md-offset-4" id="button-row">
+          <button type="submit" class="btn btn-success writer" id='modal-new-class-save'>Create</button>
           <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
         </div>
        </div>
