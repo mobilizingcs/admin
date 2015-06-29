@@ -75,27 +75,27 @@ $(function() {
     displayClassMain();
   });
 
-  $("#modal-class-metadata-save").click(function(e){
+  $("#class-detail-metadata-save").click(function(e){
     e.preventDefault();
     if ($(this).hasClass('edit')) {
       oh.class.update({
-        class_urn: $("#modal-class-urn").val(),
-        class_name: $("#modal-class-name").val(),
-        description: $("#modal-class-description").val()        
+        class_urn: $("#class-detail-urn").val(),
+        class_name: $("#class-detail-name").val(),
+        description: $("#class-detail-description").val()        
       }).done(function(){
-        message($("#modal-class-urn").val() + " updated.", "success");
+        message($("#class-detail-urn").val() + " updated.", "success");
       });
     } else {
-      var new_urn = $("#modal-class-urn").val()
+      var new_urn = $("#class-detail-urn").val()
       oh.class.create({
         class_urn: new_urn,
-        class_name: $("#modal-class-name").val(),
-        description: $("#modal-class-description").val()
+        class_name: $("#class-detail-name").val(),
+        description: $("#class-detail-description").val()
       }).done(function(){
         message(new_urn + " created!", "success");
-        $("#modal-class-urn").prop("disabled", true);
+        $("#class-detail-urn").prop("disabled", true);
         $("#class-members").collapse('show');
-        $("#modal-class-metadata-save").addClass('edit');
+        $("#class-detail-metadata-save").addClass('edit');
         classUserTable(new_urn);
       });
     }
@@ -406,13 +406,13 @@ $(function() {
     if (urn == undefined){ //pass no variables to function to make clear new class view.
       $("#class-members").removeClass('in');
       $("#class-detail-urn").hide();
-      $("#modal-class-metadata-save").removeClass("edit");
-      $("#modal-class-urn").prop('disabled', false);
+      $("#class-detail-metadata-save").removeClass("edit");
+      $("#class-detail-urn").prop('disabled', false);
     } else {
       $("#class-members").addClass('in');
       $("#class-detail-urn").show().text(urn);
-      $("#modal-class-metadata-save").addClass("edit");
-      $("#modal-class-urn").prop('disabled', true);
+      $("#class-detail-metadata-save").addClass("edit");
+      $("#class-detail-urn").prop('disabled', true);
       insertClassData(details);
       classUserTable(urn);
     }
@@ -458,22 +458,22 @@ $(function() {
     });
   }
   function insertClassData(details){
-    $("#modal-class-urn").val(details.urn).prop('disabled', true);
-    $("#modal-class-name").val(details.name);
-    $("#modal-class-description").val(details.description);
+    $("#class-detail-urn").val(details.urn).prop('disabled', true);
+    $("#class-detail-name").val(details.name);
+    $("#class-detail-description").val(details.description);
     insertCampaignList(details);
   }
   function insertCampaignList(details){
-    $("#modal-class-campaigns option").remove();
+    $("#class-detail-campaigns option").remove();
     _.each(campaign_data, function(v){
-      var el = $(document.createElement("option")).appendTo($("#modal-class-campaigns"));
+      var el = $(document.createElement("option")).appendTo($("#class-detail-campaigns"));
       el.attr("value",v.urn);
       el.text(v.name + " ("+v.urn+")");
       if (_.contains(details.campaigns, v.urn)){
         el.prop("selected", true);
       }
     })
-    $("#modal-class-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
+    $("#class-detail-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
   }
   function getChecked() {
     var user_list = [];
@@ -529,7 +529,7 @@ $(function() {
     var new_role = (data.role == 'privileged') ? 'restricted' : 'privileged';
     var update_list = data.username+';'+new_role;
     oh.class.update({
-      class_urn: $("#modal-class-urn").val(), 
+      class_urn: $("#class-detail-urn").val(), 
       user_role_list_add: update_list
     }).done(function(){
      data.role = new_role;
