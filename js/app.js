@@ -64,6 +64,17 @@ $(function() {
       }
   });
 
+  $("#new-class-button").click(function(e){
+    e.preventDefault();
+    $("#class_table_div").toggle();
+    $("#class_detail_div").toggle();
+    $(this).hide();
+    $("#back-to-class-button").show();
+    $("#modal-class-urn").prop('disabled', false);
+    $("#class-members").removeClass("in");
+    emptyForm("#class-metadata");
+  })
+
   $("#back-to-class-button").on('click', function(e) {
     e.preventDefault();
     $(this).hide();
@@ -71,18 +82,33 @@ $(function() {
     $("#class_table_div").toggle();
     $("#class_detail_div").toggle();
     $("#class-detail-urn").hide();
+    $("#modal-class-metadata-save").removeClass("edit");
   });
 
   $("#modal-class-metadata-save").click(function(e){
     e.preventDefault();
-    oh.class.create({
-      class_urn: $("#modal-class-urn").val(),
-      class_name: $("#modal-class-name").val(),
-      description: $("#modal-class-description").val()
-    }).done(function(){
-      alert("class created!");
-      $("#modal-class-urn").prop("disabled", true);
-    })
+    if ($(this).hasClass('edit')) {
+      oh.class.update({
+        class_urn: $("#modal-class-urn").val(),
+        class_name: $("#modal-class-name").val(),
+        description: $("#modal-class-description").val()        
+      }).done(function(){
+        message($("#modal-class-urn").val() + " updated.", "success");
+      });
+    } else {
+      var new_urn = $("#modal-class-urn").val()
+      oh.class.create({
+        class_urn: new_urn,
+        class_name: $("#modal-class-name").val(),
+        description: $("#modal-class-description").val()
+      }).done(function(){
+        message(new_urn + " created!", "success");
+        $("#modal-class-urn").prop("disabled", true);
+        $("#class-members").collapse();
+        $("#modal-class-metadata-save").addClass('edit');
+        classDetailTable(new_urn);
+      });
+    }
   })
 
   $("#modal-new-class-save").click(function(e){
@@ -386,14 +412,16 @@ $(function() {
       var class_details = dtDataFromButton($(this), class_table);
       $("#back-to-class-button").show();
       $("#new-class-button").hide();
+      $("#modal-class-metadata-save").addClass("edit");
       $("#class_table_div").toggle();
       $("#class_detail_div").toggle();
       $("#class-detail-urn").show().text(urn);
+      insertClassData(class_details);
       insertCampaignList(class_details);
       classDetailTable(urn, class_details);
     });
   }
-  function classDetailTable(urn, details){
+  function classDetailTable(urn){
     oh.class.read({class_urn_list: urn}).done(function(data){
       class_detail_data = $.map(data[urn].users, function(i,v){
         var role_button = '<button type="button" class="btn btn-default btn-sm role-button">'+i+'</button>';
@@ -444,6 +472,13 @@ $(function() {
     })
     $("#modal-class-campaigns").chosen({search_contains: true});
   }
+  function insertClassData(details){
+    console.log(details);
+    $("#modal-class-urn").val(details.urn).prop('disabled', true);
+    $("#modal-class-name").val(details.name);
+    $("#modal-class-description").val(details.description);
+  }
+
   function getChecked() {
     var user_list = [];
     $("tbody tr[role='row']").each(function(i){
