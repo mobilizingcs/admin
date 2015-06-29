@@ -75,16 +75,14 @@ $(function() {
 
   $("#modal-class-metadata-save").click(function(e){
     e.preventDefault();
-    oh.class.create
-    //oh.class.create({
-    //  class_urn: $("#modal-new-class-urn").val(),
-    //  class_name: $("#modal-new-class-name").val(),
-    //  description: $("#modal-new-class-description").val()
-    //}).done(function(){
-    //  refreshClass();
-    //  $("#new-class-modal").modal('toggle');
-    //  emptyForm("#new-class-form");
-    //})
+    oh.class.create({
+      class_urn: $("#modal-class-urn").val(),
+      class_name: $("#modal-class-name").val(),
+      description: $("#modal-class-description").val()
+    }).done(function(){
+      alert("class created!");
+      $("#modal-class-urn").prop("disabled", true);
+    })
   })
 
   $("#modal-new-class-save").click(function(e){
