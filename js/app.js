@@ -66,24 +66,13 @@ $(function() {
 
   $("#new-class-button").click(function(e){
     e.preventDefault();
-    $("#class_table_div").toggle();
-    $("#class_detail_div").toggle();
-    $(this).hide();
-    $("#back-to-class-button").show();
-    $("#class-members").collapse('hide');
-    $("#modal-class-urn").prop('disabled', false);
-    $("#class-members").removeClass("in");
+    displayClassDetail();
     emptyForm("#class-metadata");
   })
 
-  $("#back-to-class-button").on('click', function(e) {
+  $("#back-to-class-button").click(function(e) {
     e.preventDefault();
-    $(this).hide();
-    $("#new-class-button").show();
-    $("#class_table_div").toggle();
-    $("#class_detail_div").toggle();
-    $("#class-detail-urn").hide();
-    $("#modal-class-metadata-save").removeClass("edit");
+    displayClassMain();
   });
 
   $("#modal-class-metadata-save").click(function(e){
@@ -107,7 +96,7 @@ $(function() {
         $("#modal-class-urn").prop("disabled", true);
         $("#class-members").collapse('show');
         $("#modal-class-metadata-save").addClass('edit');
-        classDetailTable(new_urn);
+        classUserTable(new_urn);
       });
     }
   })
@@ -398,19 +387,37 @@ $(function() {
       e.preventDefault();
       var urn = $(this).data('urn');
       var class_details = dtDataFromButton($(this), class_table);
-      $("#back-to-class-button").show();
-      $("#new-class-button").hide();
-      $("#modal-class-metadata-save").addClass("edit");
-      $("#class_table_div").toggle();
-      $("#class_detail_div").toggle();
-      $("#class-members").collapse('show');
-      $("#class-detail-urn").show().text(urn);
-      insertClassData(class_details);
-      insertCampaignList(class_details);
-      classDetailTable(urn, class_details);
+      displayClassDetail(urn, class_details);
     });
   }
-  function classDetailTable(urn){
+  function displayClassMain(){
+    $("#back-to-class-button").hide();
+    $("#new-class-button").show();
+    $("#class_table_div").toggle();
+    $("#class_detail_div").toggle();
+    $("#class-detail-urn").hide();
+    refreshClass();
+  }
+  function displayClassDetail(urn, details){
+    $("#back-to-class-button").show();
+    $("#new-class-button").hide();
+    $("#class_table_div").toggle();
+    $("#class_detail_div").toggle();
+    if (urn == undefined){ //pass no variables to function to make clear new class view.
+      $("#class-members").removeClass('in');
+      $("#class-detail-urn").hide();
+      $("#modal-class-metadata-save").removeClass("edit");
+      $("#modal-class-urn").prop('disabled', false);
+    } else {
+      $("#class-members").addClass('in');
+      $("#class-detail-urn").show().text(urn);
+      $("#modal-class-metadata-save").addClass("edit");
+      $("#modal-class-urn").prop('disabled', true);
+      insertClassData(details);
+      classUserTable(urn);
+    }
+  }
+  function classUserTable(urn){
     oh.class.read({class_urn_list: urn}).done(function(data){
       class_detail_data = $.map(data[urn].users, function(i,v){
         var role_button = '<button type="button" class="btn btn-default btn-sm role-button">'+i+'</button>';
@@ -450,7 +457,14 @@ $(function() {
     }
     });
   }
+  function insertClassData(details){
+    $("#modal-class-urn").val(details.urn).prop('disabled', true);
+    $("#modal-class-name").val(details.name);
+    $("#modal-class-description").val(details.description);
+    insertCampaignList(details);
+  }
   function insertCampaignList(details){
+    $("#modal-class-campaigns option").remove();
     _.each(campaign_data, function(v){
       var el = $(document.createElement("option")).appendTo($("#modal-class-campaigns"));
       el.attr("value",v.urn);
@@ -459,15 +473,8 @@ $(function() {
         el.prop("selected", true);
       }
     })
-    $("#modal-class-campaigns").chosen({search_contains: true});
+    $("#modal-class-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
   }
-  function insertClassData(details){
-    console.log(details);
-    $("#modal-class-urn").val(details.urn).prop('disabled', true);
-    $("#modal-class-name").val(details.name);
-    $("#modal-class-description").val(details.description);
-  }
-
   function getChecked() {
     var user_list = [];
     $("tbody tr[role='row']").each(function(i){
@@ -518,10 +525,7 @@ $(function() {
       });
   }
   function roleUpdateButton(el){
-    var button = el;
-    var tr = $(el).closest("tr");
-    var row = class_detail_table.row(tr);
-    var data = row.data();
+    var data = dtDataFromButton(el);
     var new_role = (data.role == 'privileged') ? 'restricted' : 'privileged';
     var update_list = data.username+';'+new_role;
     oh.class.update({
@@ -533,7 +537,7 @@ $(function() {
     });
   };
   function emptyForm(formdiv){
-    $(formdiv).find("input[type=text], input[type=password], input[type=email], input[type=textarea]").val("");
+    $(formdiv).find("input[type=text], input[type=password], input[type=email], textarea").val("");
     $(formdiv).find("input[type=checkbox]").prop('checked', false);
   }
   function dtDataFromButton(button, table){
