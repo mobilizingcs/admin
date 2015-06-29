@@ -37,6 +37,7 @@
    </ul>
  </div>
  <div class="col-md-10" id="main">
+    <div id="error-div" style="display:hidden;"></div> 
    <!-- SUMMARY SECTION -->
    <div id="summary">
    <div class="row">
@@ -68,12 +69,13 @@
    <div id="classes" style="display:none;">
    <div class="row">
      <div class="col-md-10">
-     <h2>Classes</h2>
+     <h2>Classes <small><span id="class-detail-urn" style="display:none;"></span></small></h2>
      </div>
      <div class="col-md-2">
      <div class="pull-right">
      <h2>
-       <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#new-class-modal">New Class</button>
+       <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#new-class-modal" id="new-class-button">New Class</button>
+       <button type="button" class="btn btn-large btn-primary" id="back-to-class-button" style="display:none;">Back to List</button>
      </h2>
      </div>
      </div>
@@ -92,43 +94,71 @@
           </thead>
       </table>
     </div>
+
     <div id="class_detail_div" style="display:none;">
-      <form class="form-horizontal">
-       <div class="form-group">
-        <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn" disabled></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
-        <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
-        <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
-       </div>
-       <div class="form-group">
-        <label for="modal-class-campaigns" class="col-sm-3 control-label">Campaigns</label>
-        <div class="col-sm-8">
-          <select multiple class="form-control writer chosen-select" id="modal-class-campaigns"></select>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" href="#class-metadata">
+              Edit Class Metadata
+            </a>
+          </h4>
         </div>
-       </div>
-       <div class="form-group">
-        <div class="col-md-6 col-md-offset-3" id="button-row">
-          <button type="submit" class="btn btn-success writer" id='modal-save'>Save</button>
+        <div id="class-metadata" class="panel-collapse collapse in" role="tabpanel">
+          <div class="panel-body">
+            <form class="form-horizontal">
+             <div class="form-group">
+              <label for="modal-class-urn" class="col-sm-3 control-label">URN</label>
+              <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-urn" disabled></div>
+             </div>
+             <div class="form-group">
+              <label for="modal-class-name" class="col-sm-3 control-label">Name</label>
+              <div class="col-sm-8"><input type="text" class="form-control writer" id="modal-class-name"></div>
+             </div>
+             <div class="form-group">
+              <label for="modal-class-description" class="col-sm-3 control-label">Description</label>
+              <div class="col-sm-8"><textarea rows="2" class="form-control writer" id="modal-class-description"></textarea></div>
+             </div>
+             <div class="form-group">
+              <label for="modal-class-campaigns" class="col-sm-3 control-label">Campaigns</label>
+              <div class="col-sm-8">
+                <select multiple class="form-control writer chosen-select" id="modal-class-campaigns"></select>
+              </div>
+             </div>
+             <div class="form-group">
+              <div class="col-md-6 col-md-offset-3" id="button-row">
+                <button type="submit" class="btn btn-success writer" id='modal-class-metadata-save'>Save</button>
+              </div>
+             </div>
+            </form>
+          </div>
         </div>
-       </div>
-      </form>
-      <table id="class_detail_table" class="display compact" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th></th>
-            <th>User</th>
-            <th>Role</th>
-            <th>Remove from Class</th>
-          </tr>
-        </thead>
-      </table>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" href="#class-members">
+              Class Members
+            </a>
+          </h4>
+        </div>
+        <div id="class-members" class="panel-collapse collapse in" role="tabpanel">
+          <div class="panel-body">
+            <table id="class_detail_table" class="display compact" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Remove from Class</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
+
     </div> <!-- end row 2 (table) -->
    </div>
    <!-- END CLASSES SECTION -->

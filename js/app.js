@@ -64,18 +64,28 @@ $(function() {
       }
   });
 
-  $("#back-to-class").on('click', function(e) {
+  $("#back-to-class-button").on('click', function(e) {
     e.preventDefault();
+    $(this).hide();
+    $("#new-class-button").show();
     $("#class_table_div").toggle();
     $("#class_detail_div").toggle();
-    if ($(this).hasClass('btn-success')) {
-      $(this).text("New Class").addClass('btn-primary').removeClass('btn-success');
-      refreshClass();
-    } else {
-      $(this).text("Back").removeClass('btn-primary').addClass('btn-success');
-
-    }
+    $("#class-detail-urn").hide();
   });
+
+  $("#modal-class-metadata-save").click(function(e){
+    e.preventDefault();
+    oh.class.create
+    //oh.class.create({
+    //  class_urn: $("#modal-new-class-urn").val(),
+    //  class_name: $("#modal-new-class-name").val(),
+    //  description: $("#modal-new-class-description").val()
+    //}).done(function(){
+    //  refreshClass();
+    //  $("#new-class-modal").modal('toggle');
+    //  emptyForm("#new-class-form");
+    //})
+  })
 
   $("#modal-new-class-save").click(function(e){
     e.preventDefault();
@@ -376,12 +386,13 @@ $(function() {
       e.preventDefault();
       var urn = $(this).data('urn');
       var class_details = dtDataFromButton($(this), class_table);
+      $("#back-to-class-button").show();
+      $("#new-class-button").hide();
       $("#class_table_div").toggle();
       $("#class_detail_div").toggle();
-      $("#modal-class-urn").val(urn);
+      $("#class-detail-urn").show().text(urn);
       insertCampaignList(class_details);
       classDetailTable(urn, class_details);
-      $("#class_detail_toggle").text("Back").removeClass('btn-primary').addClass('btn-success');
     });
   }
   function classDetailTable(urn, details){
@@ -549,3 +560,8 @@ $(function() {
       return row;
   }
 });
+function message(msg, type){ //global message function to pass messages to user.
+  type = type || "danger"
+  $("#error-div").empty().append('<div class="alert alert-' + type + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + msg + '</div>');
+  $("#error-div").fadeIn(100);                                                                                                                                                                                                                   
+};
