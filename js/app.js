@@ -70,6 +70,7 @@ $(function() {
     $("#class_detail_div").toggle();
     $(this).hide();
     $("#back-to-class-button").show();
+    $("#class-members").collapse('hide');
     $("#modal-class-urn").prop('disabled', false);
     $("#class-members").removeClass("in");
     emptyForm("#class-metadata");
@@ -104,7 +105,7 @@ $(function() {
       }).done(function(){
         message(new_urn + " created!", "success");
         $("#modal-class-urn").prop("disabled", true);
-        $("#class-members").collapse();
+        $("#class-members").collapse('show');
         $("#modal-class-metadata-save").addClass('edit');
         classDetailTable(new_urn);
       });
@@ -402,6 +403,7 @@ $(function() {
       $("#modal-class-metadata-save").addClass("edit");
       $("#class_table_div").toggle();
       $("#class_detail_div").toggle();
+      $("#class-members").collapse('show');
       $("#class-detail-urn").show().text(urn);
       insertClassData(class_details);
       insertCampaignList(class_details);
