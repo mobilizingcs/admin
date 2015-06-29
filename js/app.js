@@ -33,7 +33,7 @@ $(function() {
   $(".navs").click(function(e){
     e.preventDefault();
     var clicked = "#" + this.text.toLowerCase();
-    $(".navs").removeClass('active');
+    $(".navs").parent().removeClass('active');
     $(this).parent().addClass("active");
     hideAllExcept(clicked);
   });
