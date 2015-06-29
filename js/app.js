@@ -111,19 +111,6 @@ $(function() {
     }
   })
 
-  $("#modal-new-class-save").click(function(e){
-    e.preventDefault();
-    oh.class.create({
-      class_urn: $("#modal-new-class-urn").val(),
-      class_name: $("#modal-new-class-name").val(),
-      description: $("#modal-new-class-description").val()
-    }).done(function(){
-      refreshClass();
-      $("#new-class-modal").modal('toggle');
-      emptyForm("#new-class-form");
-    })
-  })
-
   $("#modal-user-save").on('click', function(e) {
     e.preventDefault();
     //validate first, duh.
