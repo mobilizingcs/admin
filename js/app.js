@@ -395,7 +395,7 @@ $(function() {
     $("#new-class-button").show();
     $("#class_table_div").toggle();
     $("#class_detail_div").toggle();
-    $("#class-detail-urn").hide();
+    $("#class-detail-urn-title").hide();
     refreshClass();
   }
   function displayClassDetail(urn, details){
@@ -405,12 +405,12 @@ $(function() {
     $("#class_detail_div").toggle();
     if (urn == undefined){ //pass no variables to function to make clear new class view.
       $("#class-members").removeClass('in');
-      $("#class-detail-urn").hide();
+      $("#class-detail-urn-title").hide();
       $("#class-detail-metadata-save").removeClass("edit");
       $("#class-detail-urn").prop('disabled', false);
     } else {
       $("#class-members").addClass('in');
-      $("#class-detail-urn").show().text(urn);
+      $("#class-detail-urn-title").show().text(urn);
       $("#class-detail-metadata-save").addClass("edit");
       $("#class-detail-urn").prop('disabled', true);
       insertClassData(details);
