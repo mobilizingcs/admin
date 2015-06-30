@@ -7,7 +7,7 @@ oh.callback("done", function(x, status, req){
 
 //global error handler. In ohmage 200 means unauthenticated
 oh.callback("error", function(msg, code, req){
-	(code == 200) ? window.location.replace("/login.html") : alert("Error!\n" + msg);
+	(code == 200) ? window.location.replace("/login.html") : message("Error!\n" + msg);
 });
 
 
@@ -72,8 +72,8 @@ $(function() {
 
   $("#new-user-button").click(function(e){
     e.preventDefault();
-    displayUserDetail();
     emptyForm("#user-detail-div");
+    displayUserDetail();
   });
 
   $("#back-to-user-button").click(function(e) {
@@ -169,28 +169,6 @@ $(function() {
       batchUserUpdate('user_setup_privilege', state);
     } else if ($(this).hasClass('delete')) {
       delete_selected_users();
-    }
-  });
-
-  $('#user-modal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    if(button.data('username')){
-      var tr = $(button).closest("tr");
-      var row = user_table.row(tr);
-      var data = row.data();
-      $("#user-modal-title").text('Edit User');
-      $("#user-modal-password-form").hide();
-      $("#user-detail-save").text("Update");
-      $("#ChangePwAccordion").show();     
-      insertUserData(data);
-    } else {
-      clearUserModal();
-      $("#user-detail-new-account").prop("checked", true);
-      $("#user-detail-enabled").prop("checked", true);
-      $("#user-modal-title").text('Add User');
-      $("#user-modal-password-form").show();
-      $("#user-detail-save").text("Create");
-      $("#ChangePwAccordion").hide();
     }
   });
 
@@ -306,7 +284,7 @@ $(function() {
         }
         val.campaign_count = _.size(val.campaigns);
         val.class_count = _.size(val.classes);
-        val.edit_button = '<button type="button" class="btn btn-success user-detail" data-urn="'+val['username']+'">Edit</button>'
+        val.edit_button = '<button type="button" class="btn btn-success user-detail" data-username="'+val['username']+'">Edit</button>'
         return val;
       });
       fun = fun || function(){ return true }
@@ -344,13 +322,14 @@ $(function() {
       user_table.clear();
       user_table.rows.add(user_data);
       user_table.draw();
+      registerUserDetail();
     };
   };
   function registerUserDetail(){
-    $(".user-detail").click(function (e){
+    $(".user-detail").on('click', function (e){
       e.preventDefault();
       var username = $(this).data('username');
-      var user_details = dtDataFromButton($(this), user_table);
+      var user_details = dtDataFromCell($(this), user_table);
       displayUserDetail(user_details);
     });
   };
@@ -379,6 +358,7 @@ $(function() {
     $("#user-detail-div").hide();
     $("#bulk-action-button").show();
     $("#user-detail-title").hide(); 
+    refreshUser();
   }
   function classTable(){
       if (!$.fn.DataTable.isDataTable('#class_table')) {
@@ -440,7 +420,7 @@ $(function() {
     $(".class-detail").on('click', function (e){
       e.preventDefault();
       var urn = $(this).data('urn');
-      var class_details = dtDataFromButton($(this), class_table);
+      var class_details = dtDataFromCell($(this), class_table);
       displayClassDetail(urn, class_details);
     });
   }
@@ -529,21 +509,8 @@ $(function() {
     })
     $("#class-detail-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
   }
-  function getChecked() {
-    var user_list = [];
-    $("tbody tr[role='row']").each(function(i){
-        var tr = $(this);
-        var row = user_table.row(tr);
-        var data = row.data();
-        var checkbox = tr.find(":checkbox");
-        if(checkbox.is(':checked')){
-          user_list.push(data.username);
-        }
-    });
-    return user_list;
-  }
   function batchUserUpdate(action, state) {
-    $.each(getChecked(), function(i,u){
+    $.each(getChecked(user_table), function(i,u){
       oh.user.update({
         username: u,
         action: state
@@ -551,7 +518,6 @@ $(function() {
     });
   };
   function insertUserData(data) {
-    clearUserModal();
     $("#user-detail-username").val(data.username);
     $("#user-detail-email").val(data.email_address);
     $("#user-detail-enabled").prop("checked", data.permissions.enabled);
@@ -567,19 +533,15 @@ $(function() {
       $("#user-detail-personal-id").val(data.personal.personal_id);
     }
   }
-  function clearUserModal(){
-    $("#user-modal .writer.form-control").val('').prop('disabled', false);
-    $("#user-modal :checkbox").prop("checked", false);
-  }
   function delete_selected_users(){
       if(!confirm("Are you sure you want to delete these users? This cannot be undone!")) return;
-      oh.user.delete({user_list: getChecked().toString()}).done(function(){
+      oh.user.delete({user_list: getChecked(user_table).toString()}).done(function(){
         alert("Successfully delete users!");
         userTable;
       });
   }
   function roleUpdateButton(el){
-    var data = dtDataFromButton(el);
+    var data = dtDataFromCell(el);
     var new_role = (data.role == 'privileged') ? 'restricted' : 'privileged';
     var update_list = data.username+';'+new_role;
     oh.class.update({
@@ -590,11 +552,23 @@ $(function() {
      $(button).text(new_role);
     });
   };
+  function getChecked(table) {
+    var checked_list = [];
+    table.$('tr').each(function(index,row){
+      var checkbox = $(row).find(':checkbox');
+      var data = table.row(index).data();
+      if(checkbox.is(':checked')){
+        var value = data.username ? data.username : data.urn;
+        checked_list.push(value);
+      }
+    });
+    return checked_list;
+  }
   function emptyForm(formdiv){
     $(formdiv).find("input[type=text], input[type=password], input[type=email], textarea").val("");
     $(formdiv).find("input[type=checkbox]").prop('checked', false);
   }
-  function dtDataFromButton(button, table){
+  function dtDataFromCell(button, table){
     var tr = $(button).closest("tr");
     var row = table.row(tr);
     return row.data();
