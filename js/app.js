@@ -154,6 +154,12 @@ $(function() {
     }
   });
 
+  $(".user-bulk").click(function(e){
+    e.preventDefault();
+    var state = $(this).data('state');
+    var action = $(this).data('action');
+    bulkUserUpdate(action, state);
+  })
   $(".user-batch").on('click', function(){
     state = $(this).hasClass('false') ? false : true;
     //this is so ugly.
@@ -168,7 +174,7 @@ $(function() {
     } else if ($(this).hasClass('user_setup_privilege')) {
       batchUserUpdate('user_setup_privilege', state);
     } else if ($(this).hasClass('delete')) {
-      delete_selected_users();
+      bulkDeleteUsers();
     }
   });
 
@@ -513,6 +519,14 @@ $(function() {
     })
     $("#class-detail-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
   }
+  function bulkUserUpdate(action, state){
+    _.each(getChecked(user_table), function(u){
+      oh.user.update({
+        username: u,
+        action: state
+      });
+    });
+  }
   function batchUserUpdate(action, state) {
     $.each(getChecked(user_table), function(i,u){
       oh.user.update({
@@ -537,11 +551,12 @@ $(function() {
       $("#user-detail-personal-id").val(data.personal.personal_id);
     }
   }
-  function delete_selected_users(){
-      if(!confirm("Are you sure you want to delete these users? This cannot be undone!")) return;
-      oh.user.delete({user_list: getChecked(user_table).toString()}).done(function(){
-        alert("Successfully delete users!");
-        userTable;
+  function bulkDeleteUsers(){
+    var to_delete = getChecked(user_table).toString();
+    if(!confirm("Are you sure you want to delete the users: "+to_delete+"? This cannot be undone!")) return;
+      oh.user.delete({user_list: to_delete}).done(function(){
+        message("Successfully delete users!", "success");
+        refreshUser();
       });
   }
   function roleUpdateButton(el){
@@ -559,8 +574,8 @@ $(function() {
   function getChecked(table) {
     var checked_list = [];
     table.$('tr').each(function(index,row){
-      var checkbox = $(row).find(':checkbox');
-      var data = table.row(index).data();
+      var checkbox = $(row).find('input[type=checkbox]');
+      var data = table.row($(row)).data();
       if(checkbox.is(':checked')){
         var value = data.username ? data.username : data.urn;
         checked_list.push(value);
