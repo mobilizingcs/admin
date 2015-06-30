@@ -46,7 +46,7 @@ $(function() {
     }
   });
 
-  $("#refresh_button").click(function(){
+  $("#refresh-button").click(function(){
     $(this).addClass("gly-spin");
     reloadData(function(){
       createSummary();
@@ -83,8 +83,8 @@ $(function() {
 
   $("#new-class-button").click(function(e){
     e.preventDefault();
-    displayClassDetail();
     emptyForm("#class-metadata");
+    displayClassDetail();
   });
 
   $("#back-to-class-button").click(function(e) {
