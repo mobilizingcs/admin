@@ -34,10 +34,14 @@ $(function() {
 
   $(".navs").click(function(e){
     e.preventDefault();
-    var clicked = "#" + this.text.toLowerCase();
+    var nav_name = this.text.toLowerCase();
+    var clicked = "#" + nav_name;
     $(".navs").parent().removeClass('active');
     $(this).parent().addClass("active");
     hideAllExcept(clicked);
+    if (nav_name == 'classes'){
+      displayClassMain();
+    }
   });
 
   $("#refresh_button").click(function(){
@@ -393,16 +397,16 @@ $(function() {
   function displayClassMain(){
     $("#back-to-class-button").hide();
     $("#new-class-button").show();
-    $("#class_table_div").toggle();
-    $("#class_detail_div").toggle();
+    $("#class_table_div").show();
+    $("#class_detail_div").hide();
     $("#class-detail-urn-title").hide();
     refreshClass();
   }
   function displayClassDetail(urn, details){
     $("#back-to-class-button").show();
     $("#new-class-button").hide();
-    $("#class_table_div").toggle();
-    $("#class_detail_div").toggle();
+    $("#class_table_div").hide();
+    $("#class_detail_div").show();
     if (urn == undefined){ //pass no variables to function to make clear new class view.
       $("#class-members").removeClass('in');
       $("#class-detail-urn-title").hide();
