@@ -120,6 +120,7 @@ $(function() {
 
   $("#user-detail-save").on('click', function(e) {
     e.preventDefault();
+    //$(this).hasClass('edit') ? userDetailUpdate() : userDetailCreate();
     //validate first, duh.
     if ($("#user-modal-title").text() == 'Add User') {
       oh.user.create({
@@ -159,23 +160,6 @@ $(function() {
     var state = $(this).data('state');
     var action = $(this).data('action');
     bulkUserUpdate(action, state);
-  })
-  $(".user-batch").on('click', function(){
-    state = $(this).hasClass('false') ? false : true;
-    //this is so ugly.
-    if ($(this).hasClass('enabled_account')) {
-      batchUserUpdate('enabled', state);
-    } else if ($(this).hasClass('new_account')) {
-      batchUserUpdate('new_account', state);
-    } else if ($(this).hasClass('campaign_creation_privilege')) {
-      batchUserUpdate('campaign_creation_privilege', state);
-    } else if ($(this).hasClass('class_creation_privilege')) {
-      batchUserUpdate('class_creation_privilege', state);
-    } else if ($(this).hasClass('user_setup_privilege')) {
-      batchUserUpdate('user_setup_privilege', state);
-    } else if ($(this).hasClass('delete')) {
-      bulkDeleteUsers();
-    }
   });
 
   $(".show-hide-pw").on('click', function(){
@@ -520,13 +504,17 @@ $(function() {
     $("#class-detail-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
   }
   function bulkUserUpdate(action, state){
-    _.each(getChecked(user_table), function(u){
-      var data = {};
-      data['username'] = u;
+    var users = getChecked(user_table);
+    var count = (users.length - 1);
+    _.each(users, function(u,i){
+      var data = {username: u};
       data[action] = state;
-      oh.user.update(data);
+      oh.user.update(data).done(function(){
+        if (i == count) { //lazy man's promise
+          refreshUser();
+        }
     });
-    refreshUser();
+  });
   }
   function insertUserData(data) {
     $("#user-detail-username").val(data.username);
