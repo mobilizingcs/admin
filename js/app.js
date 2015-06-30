@@ -41,6 +41,8 @@ $(function() {
     hideAllExcept(clicked);
     if (nav_name == 'classes'){
       displayClassMain();
+    } else if (nav_name == 'users'){
+      displayUserMain();
     }
   });
 
@@ -68,11 +70,22 @@ $(function() {
       }
   });
 
+  $("#new-user-button").click(function(e){
+    e.preventDefault();
+    displayUserDetail();
+    emptyForm("#user-detail-div");
+  });
+
+  $("#back-to-user-button").click(function(e) {
+    e.preventDefault();
+    displayUserMain();
+  });
+
   $("#new-class-button").click(function(e){
     e.preventDefault();
     displayClassDetail();
     emptyForm("#class-metadata");
-  })
+  });
 
   $("#back-to-class-button").click(function(e) {
     e.preventDefault();
@@ -105,35 +118,35 @@ $(function() {
     }
   })
 
-  $("#modal-user-save").on('click', function(e) {
+  $("#user-detail-save").on('click', function(e) {
     e.preventDefault();
     //validate first, duh.
     if ($("#user-modal-title").text() == 'Add User') {
       oh.user.create({
-        username: $("#modal-user-username").val(),
-        password: $("#modal-user-password").val(),
-        admin: $("#modal-user-admin").prop('checked'),
-        enabled: $("#modal-user-enabled").prop('checked'),
-        new_account: $("#modal-user-new-account").prop('checked'),
-        campaign_creation_privilege: $("#modal-user-create-campaigns").prop('checked')
+        username: $("#user-detail-username").val(),
+        password: $("#user-detail-password").val(),
+        admin: $("#user-detail-admin").prop('checked'),
+        enabled: $("#user-detail-enabled").prop('checked'),
+        new_account: $("#user-detail-new-account").prop('checked'),
+        campaign_creation_privilege: $("#user-detail-create-campaigns").prop('checked')
       }).done(function(){
         refreshUser();
         $("#user-modal").modal('toggle');
       });
     } else {
       oh.user.update({
-        username: $("#modal-user-username").val(),
-        email_address: $("#modal-user-email").val(),
-        admin: $("#modal-user-admin").prop('checked'),
-        enabled: $("#modal-user-enabled").prop('checked'),
-        new_account: $("#modal-user-new-account").prop('checked'),
-        campaign_creation_privilege: $("#modal-user-create-campaigns").prop('checked'),
-        first_name: $("#modal-user-first-name").val(),
-        last_name: $("#modal-user-last-name").val(),
-        organization: $("#modal-user-org").val(),  
-        personal_id: $("#modal-user-personal-id").val(),
-        user_setup_privilege: $("#modal-user-setup-users").prop('checked'),
-        class_creation_privilege: $("#modal-user-create-classes").prop('checked'),        
+        username: $("#user-detail-username").val(),
+        email_address: $("#user-detail-email").val(),
+        admin: $("#user-detail-admin").prop('checked'),
+        enabled: $("#user-detail-enabled").prop('checked'),
+        new_account: $("#user-detail-new-account").prop('checked'),
+        campaign_creation_privilege: $("#user-detail-create-campaigns").prop('checked'),
+        first_name: $("#user-detail-first-name").val(),
+        last_name: $("#user-detail-last-name").val(),
+        organization: $("#user-detail-org").val(),  
+        personal_id: $("#user-detail-personal-id").val(),
+        user_setup_privilege: $("#user-detail-setup-users").prop('checked'),
+        class_creation_privilege: $("#user-detail-create-classes").prop('checked'),        
       }).done(function(){
         refreshUser();
         $("#user-modal").modal('toggle');
@@ -167,16 +180,16 @@ $(function() {
       var data = row.data();
       $("#user-modal-title").text('Edit User');
       $("#user-modal-password-form").hide();
-      $("#modal-user-save").text("Update");
+      $("#user-detail-save").text("Update");
       $("#ChangePwAccordion").show();     
       insertUserData(data);
     } else {
       clearUserModal();
-      $("#modal-user-new-account").prop("checked", true);
-      $("#modal-user-enabled").prop("checked", true);
+      $("#user-detail-new-account").prop("checked", true);
+      $("#user-detail-enabled").prop("checked", true);
       $("#user-modal-title").text('Add User');
       $("#user-modal-password-form").show();
-      $("#modal-user-save").text("Create");
+      $("#user-detail-save").text("Create");
       $("#ChangePwAccordion").hide();
     }
   });
@@ -191,18 +204,18 @@ $(function() {
     }
   });
 
-  $("#modal-user-change-pw-submit").on('click', function(e){
+  $("#user-detail-change-pw-submit").on('click', function(e){
     e.preventDefault();
     oh.user.change_password({
       user: me,
-      username: $("#modal-user-username").val(),
-      password: $("#modal-user-change-pw-admin").val(),
-      new_password: $("#modal-user-change-pw-user").val()
+      username: $("#user-detail-username").val(),
+      password: $("#user-detail-change-pw-admin").val(),
+      new_password: $("#user-detail-change-pw-user").val()
     }).done(function(){
       alert("Successfully changed password");
       $("#ChangePwCollapse").collapse('hide');
-      $("#modal-user-change-pw-admin").val('');
-      $("#modal-user-change-pw-user").val('');
+      $("#user-detail-change-pw-admin").val('');
+      $("#user-detail-change-pw-user").val('');
     });
   });
 
@@ -293,7 +306,7 @@ $(function() {
         }
         val.campaign_count = _.size(val.campaigns);
         val.class_count = _.size(val.classes);
-        val.edit_button = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#user-modal" data-username="'+val['username']+'">Edit</button>';
+        val.edit_button = '<button type="button" class="btn btn-success user-detail" data-urn="'+val['username']+'">Edit</button>'
         return val;
       });
       fun = fun || function(){ return true }
@@ -303,6 +316,9 @@ $(function() {
   function userTable(){
     if (!$.fn.DataTable.isDataTable('#user_table')) {
       user_table = $('#user_table').DataTable({
+       "initComplete": function(){
+         registerUserDetail();
+       },
        "data": user_data,
        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
        "oSearch": {"sSearch": "",
@@ -330,6 +346,40 @@ $(function() {
       user_table.draw();
     };
   };
+  function registerUserDetail(){
+    $(".user-detail").click(function (e){
+      e.preventDefault();
+      var username = $(this).data('username');
+      var user_details = dtDataFromButton($(this), user_table);
+      displayUserDetail(user_details);
+    });
+  };
+  function displayUserDetail(details){
+    $("#user-div").hide();
+    $("#new-user-button").hide();
+    $("#back-to-user-button").show();
+    $("#user-detail-div").show();
+    $("#bulk-action-button").hide();
+    if (details == undefined){
+      $("#user-detail-title").hide();
+      $("#user-detail-save").removeClass("edit");
+      $("#user-detail-username").prop('disabled', false);
+    } else {
+      $("#user-detail-title").show().text(details.username);
+      $("#user-detail-save").addClass("edit");
+      $("#user-detail-username").prop('disabled', true);
+      insertUserData(details);
+
+    }
+  }
+  function displayUserMain(){
+    $("#user-div").show();
+    $("#new-user-button").show();
+    $("#back-to-user-button").hide();
+    $("#user-detail-div").hide();
+    $("#bulk-action-button").show();
+    $("#user-detail-title").hide(); 
+  }
   function classTable(){
       if (!$.fn.DataTable.isDataTable('#class_table')) {
       class_table = $('#class_table').DataTable( {
@@ -502,19 +552,19 @@ $(function() {
   };
   function insertUserData(data) {
     clearUserModal();
-    $("#modal-user-username").val(data.username).prop('disabled', true);
-    $("#modal-user-email").val(data.email_address);
-    $("#modal-user-enabled").prop("checked", data.permissions.enabled);
-    $("#modal-user-admin").prop("checked", data.permissions.admin);
-    $("#modal-user-new-account").prop("checked", data.permissions.new_account);
-    $("#modal-user-create-campaigns").prop("checked", data.permissions.can_create_campaigns);
-    $("#modal-user-create-classes").prop("checked", data.permissions.can_create_classes);
-    $("#modal-user-setup-users").prop("checked", data.permissions.can_setup_users);
+    $("#user-detail-username").val(data.username);
+    $("#user-detail-email").val(data.email_address);
+    $("#user-detail-enabled").prop("checked", data.permissions.enabled);
+    $("#user-detail-admin").prop("checked", data.permissions.admin);
+    $("#user-detail-new-account").prop("checked", data.permissions.new_account);
+    $("#user-detail-create-campaigns").prop("checked", data.permissions.can_create_campaigns);
+    $("#user-detail-create-classes").prop("checked", data.permissions.can_create_classes);
+    $("#user-detail-setup-users").prop("checked", data.permissions.can_setup_users);
     if (data.personal) {
-      $("#modal-user-first-name").val(data.personal.first_name);
-      $("#modal-user-last-name").val(data.personal.last_name);
-      $("#modal-user-org").val(data.personal.organization);
-      $("#modal-user-personal-id").val(data.personal.personal_id);
+      $("#user-detail-first-name").val(data.personal.first_name);
+      $("#user-detail-last-name").val(data.personal.last_name);
+      $("#user-detail-org").val(data.personal.organization);
+      $("#user-detail-personal-id").val(data.personal.personal_id);
     }
   }
   function clearUserModal(){
