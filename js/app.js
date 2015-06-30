@@ -116,43 +116,11 @@ $(function() {
         classUserTable(new_urn);
       });
     }
-  })
+  });
 
   $("#user-detail-save").on('click', function(e) {
     e.preventDefault();
-    //$(this).hasClass('edit') ? userDetailUpdate() : userDetailCreate();
-    //validate first, duh.
-    if ($("#user-modal-title").text() == 'Add User') {
-      oh.user.create({
-        username: $("#user-detail-username").val(),
-        password: $("#user-detail-password").val(),
-        admin: $("#user-detail-admin").prop('checked'),
-        enabled: $("#user-detail-enabled").prop('checked'),
-        new_account: $("#user-detail-new-account").prop('checked'),
-        campaign_creation_privilege: $("#user-detail-create-campaigns").prop('checked')
-      }).done(function(){
-        refreshUser();
-        $("#user-modal").modal('toggle');
-      });
-    } else {
-      oh.user.update({
-        username: $("#user-detail-username").val(),
-        email_address: $("#user-detail-email").val(),
-        admin: $("#user-detail-admin").prop('checked'),
-        enabled: $("#user-detail-enabled").prop('checked'),
-        new_account: $("#user-detail-new-account").prop('checked'),
-        campaign_creation_privilege: $("#user-detail-create-campaigns").prop('checked'),
-        first_name: $("#user-detail-first-name").val(),
-        last_name: $("#user-detail-last-name").val(),
-        organization: $("#user-detail-org").val(),  
-        personal_id: $("#user-detail-personal-id").val(),
-        user_setup_privilege: $("#user-detail-setup-users").prop('checked'),
-        class_creation_privilege: $("#user-detail-create-classes").prop('checked'),        
-      }).done(function(){
-        refreshUser();
-        $("#user-modal").modal('toggle');
-      });
-    }
+    $(this).hasClass('edit') ? userDetailUpdate() : userDetailCreate();
   });
 
   $(".user-bulk").click(function(e){
@@ -321,6 +289,40 @@ $(function() {
       var username = $(this).data('username');
       var user_details = dtDataFromCell($(this), user_table);
       displayUserDetail(user_details);
+    });
+  };
+  function userDetailCreate(){
+    var new_user = $("#user-detail-username").val();
+    oh.user.create({
+      username: new_user,
+      password: $("#user-detail-password").val(),
+      admin: $("#user-detail-admin").prop('checked'),
+      enabled: $("#user-detail-enabled").prop('checked'),
+      new_account: $("#user-detail-new-account").prop('checked'),
+      campaign_creation_privilege: $("#user-detail-create-campaigns").prop('checked')     
+    }).done(function(){
+      message('Successfully created user: '+new_user, "success");
+      //something to make this user uneditable
+      //refreshUser();
+      //$("#user-modal").modal('toggle');
+    }); 
+  };
+  function userDetailUpdate(){
+    oh.user.update({
+      username: $("#user-detail-username").val(),
+      email_address: $("#user-detail-email").val(),
+      admin: $("#user-detail-admin").prop('checked'),
+      enabled: $("#user-detail-enabled").prop('checked'),
+      new_account: $("#user-detail-new-account").prop('checked'),
+      campaign_creation_privilege: $("#user-detail-create-campaigns").prop('checked'),
+      first_name: $("#user-detail-first-name").val(),
+      last_name: $("#user-detail-last-name").val(),
+      organization: $("#user-detail-org").val(),  
+      personal_id: $("#user-detail-personal-id").val(),
+      user_setup_privilege: $("#user-detail-setup-users").prop('checked'),
+      class_creation_privilege: $("#user-detail-create-classes").prop('checked'),        
+    }).done(function(){
+      message("Successfully updated user details", "success");
     });
   };
   function displayUserDetail(details){
@@ -512,6 +514,7 @@ $(function() {
       oh.user.update(data).done(function(){
         if (i == count) { //lazy man's promise
           refreshUser();
+          message("Successfully updated users", "success");
         }
     });
   });
