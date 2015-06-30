@@ -27,7 +27,7 @@ $(function() {
         alert('This tool is only available for administrators. You will now be redirected...');
         window.location.replace("/");
       } else {
-        $("#refresh_button").trigger('click');
+        $("#refresh-button").trigger('click');
       }
     });
   });
@@ -53,7 +53,7 @@ $(function() {
       userTable();
       auditsTable();
       classTable();
-      $("#refresh_button").removeClass("gly-spin");
+      $("#refresh-button").removeClass("gly-spin");
     });
   })
 
@@ -521,20 +521,13 @@ $(function() {
   }
   function bulkUserUpdate(action, state){
     _.each(getChecked(user_table), function(u){
-      oh.user.update({
-        username: u,
-        action: state
-      });
+      var data = {};
+      data['username'] = u;
+      data[action] = state;
+      oh.user.update(data);
     });
+    refreshUser();
   }
-  function batchUserUpdate(action, state) {
-    $.each(getChecked(user_table), function(i,u){
-      oh.user.update({
-        username: u,
-        action: state
-      });
-    });
-  };
   function insertUserData(data) {
     $("#user-detail-username").val(data.username);
     $("#user-detail-email").val(data.email_address);
