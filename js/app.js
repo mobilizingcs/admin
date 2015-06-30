@@ -120,14 +120,21 @@ $(function() {
 
   $("#user-detail-save").on('click', function(e) {
     e.preventDefault();
-    $(this).hasClass('edit') ? userDetailUpdate() : userDetailCreate();
+    if ($(this).hasClass('edit')) {
+     userDetailUpdate(function(){
+       message("Successfully updated user details", "success")
+     });
+    } else { 
+     userDetailCreate();
+    }
   });
 
   $(".user-bulk").click(function(e){
     e.preventDefault();
     var state = $(this).data('state');
     var action = $(this).data('action');
-    bulkUserUpdate(action, state);
+    var action_users = getChecked(user_table);
+    action == 'delete' ? deleteUser(action_users) : bulkUserUpdate(action, state);
   });
 
   $(".show-hide-pw").on('click', function(){
@@ -302,12 +309,15 @@ $(function() {
       campaign_creation_privilege: $("#user-detail-create-campaigns").prop('checked')     
     }).done(function(){
       message('Successfully created user: '+new_user, "success");
-      //something to make this user uneditable
-      //refreshUser();
-      //$("#user-modal").modal('toggle');
+      userDetailUpdate(function(){
+        userSearch(function(){
+          var new_user_details = _.findWhere(user_data, {username: new_user})
+          displayUserDetail(new_user_details);
+        });
+      });
     }); 
   };
-  function userDetailUpdate(){
+  function userDetailUpdate(fun){
     oh.user.update({
       username: $("#user-detail-username").val(),
       email_address: $("#user-detail-email").val(),
@@ -322,7 +332,8 @@ $(function() {
       user_setup_privilege: $("#user-detail-setup-users").prop('checked'),
       class_creation_privilege: $("#user-detail-create-classes").prop('checked'),        
     }).done(function(){
-      message("Successfully updated user details", "success");
+      fun = fun || function(){ return true }
+      fun();
     });
   };
   function displayUserDetail(details){
@@ -535,9 +546,9 @@ $(function() {
       $("#user-detail-personal-id").val(data.personal.personal_id);
     }
   }
-  function bulkDeleteUsers(){
-    var to_delete = getChecked(user_table).toString();
-    if(!confirm("Are you sure you want to delete the users: "+to_delete+"? This cannot be undone!")) return;
+  function deleteUser(user_array){
+    var to_delete = user_array.toString();
+    if(!confirm("Are you sure you want to delete the following users: "+to_delete+"? This cannot be undone!")) return;
       oh.user.delete({user_list: to_delete}).done(function(){
         message("Successfully delete users!", "success");
         refreshUser();
