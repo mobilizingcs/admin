@@ -143,6 +143,14 @@ $(function() {
     action == 'delete' ? deleteUser(action_users) : bulkUserUpdate(action, state);
   });
 
+  $(".class-bulk").click(function(e){
+    e.preventDefault();
+    var role = $(this).data('role');
+    var users = getChecked(class_detail_table);
+    var urn = $("#class-detail-urn").val()
+    role == 'remove' ? bulkUserClassRemove(urn, users) : bulkUserRole(urn, users, role);
+  });
+
   $(".class-user-add").click(function(e){
     e.preventDefault();
     var role = $(this).data('role');
@@ -366,7 +374,7 @@ $(function() {
       class_urn: class_urn,
       user_role_list_add: user_role_list_add
     }).done(function(){
-      message("Successfully added users", "success");
+      user_array.length > 1 ? message("Successfully added users", "success") : true;
       userSearch(function(){
         displayClassDetail(class_urn);
       })
@@ -378,7 +386,7 @@ $(function() {
       class_urn: class_urn,
       user_list_remove: user_list_remove
     }).done(function(){
-      message("Successfully removed users", "success");
+      user_array.length > 1 ? message("Successfully removed users", "success") : true;
       userSearch(function(){
         displayClassDetail(class_urn);
       })
@@ -522,6 +530,8 @@ $(function() {
         valueField: 'name',
         labelField: 'name',
         searchField: ['name'],
+        //inputClass: 'form-control selectize-input',
+        dropdownParent: "body",
         options: tokenizeUserData(urn),
       });
     }
@@ -553,7 +563,11 @@ $(function() {
   function classUserTable(urn){
     oh.class.read({class_urn_list: urn}).done(function(data){
       class_detail_data = $.map(data[urn].users, function(i,v){
-        var role_button = '<button type="button" class="btn btn-default btn-sm role-button">'+i+'</button>';
+        if (i == 'privileged') {
+          var role_button = '<button type="button" class="btn btn-success btn-sm class-user-role" data-username="'+v+'">privileged</button>'
+        } else {
+          var role_button = '<button type="button" class="btn btn-info btn-sm class-user-role" data-username="'+v+'">restricted</button>'
+        }
         var checkbox = '<input type="checkbox" class="rowcheckbox">'
         var remove_button = '<button type="button" class="btn btn-danger btn-sm class-user-remove" data-username="'+v+'">Remove</button>';
         return { "checkbox":checkbox, 
@@ -573,10 +587,6 @@ $(function() {
        "ordering": false,
        "filter": false,
        "info":     false,
-       //"oSearch": {"sSearch": "",
-       // "bRegex": true
-       //},
-       //"order": [[ 1, "asc" ]],
        "columns": [
         { "data": "checkbox"},
         { "data": "username"},
@@ -593,9 +603,13 @@ $(function() {
     });
   }
   function registerClassUserDetail(){
-    $(".role-button").on('click', function (){
-      roleUpdateButton(this);
-    }); 
+    $(".class-user-role").click(function(e){
+      e.preventDefault();
+      var user_array = [];
+      var new_role = $(this).text() == 'privileged' ? 'restricted' : 'privileged';
+      user_array.push($(this).data('username'));
+      bulkUserRole($("#class-detail-urn").val(), user_array, new_role);     
+    })
     $(".class-user-remove").click(function(e){
       e.preventDefault();
       var user_array = []
@@ -684,18 +698,6 @@ $(function() {
         refreshUser();
       });
   }
-  function roleUpdateButton(el){
-    var data = dtDataFromCell(el);
-    var new_role = (data.role == 'privileged') ? 'restricted' : 'privileged';
-    var update_list = data.username+';'+new_role;
-    oh.class.update({
-      class_urn: $("#class-detail-urn").val(), 
-      user_role_list_add: update_list
-    }).done(function(){
-     data.role = new_role;
-     $(button).text(new_role);
-    });
-  };
   function getChecked(table) {
     var checked_list = [];
     table.$('tr').each(function(index,row){
