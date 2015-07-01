@@ -526,7 +526,7 @@ $(function() {
        "initComplete": function(){
           registerClassUserDetail();
         },
-       "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+       "bPaginate": false,
        "oSearch": {"sSearch": "",
         "bRegex": true
        },
