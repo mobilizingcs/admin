@@ -10,6 +10,11 @@ oh.callback("error", function(msg, code, req){
 	(code == 200) ? window.location.replace("/login.html") : message("Error!\n" + msg);
 });
 
+function message(msg, type){ //global message function to pass messages to user.
+  type = type || "danger"
+  $("#error-div").empty().append('<div class="alert alert-' + type + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + msg + '</div>');
+  $("#error-div").fadeIn(100);                                                                                                                                                                                                                   
+};
 
 //main app
 $(function() {
@@ -349,6 +354,7 @@ $(function() {
     $("#back-to-user-button").show();
     $("#user-detail-div").show();
     $("#bulk-action-button").hide();
+
     if (details == undefined){
       $("#user-detail-title").hide();
       $("#user-detail-save").removeClass("edit");
@@ -543,7 +549,7 @@ $(function() {
       var data = {username: u};
       data[action] = state;
       oh.user.update(data).done(function(){
-        if (i == count) { //lazy man's promise
+        if (i == count) { //lazy man's promises
           refreshUser();
           message("Successfully updated users", "success");
         }
@@ -552,6 +558,7 @@ $(function() {
   }
   function insertUserData(data) {
     $("#user-detail-username").val(data.username);
+    $("#user-detail-password").val("");
     $("#user-detail-email").val(data.email_address);
     $("#user-detail-enabled").prop("checked", data.permissions.enabled);
     $("#user-detail-admin").prop("checked", data.permissions.admin);
@@ -648,8 +655,3 @@ $(function() {
       return row;
   }
 });
-function message(msg, type){ //global message function to pass messages to user.
-  type = type || "danger"
-  $("#error-div").empty().append('<div class="alert alert-' + type + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + msg + '</div>');
-  $("#error-div").fadeIn(100);                                                                                                                                                                                                                   
-};
