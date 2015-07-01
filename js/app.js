@@ -143,6 +143,13 @@ $(function() {
     action == 'delete' ? deleteUser(action_users) : bulkUserUpdate(action, state);
   });
 
+  $(".class-user-add").click(function(e){
+    e.preventDefault();
+    var role = $(this).data('role');
+    var users = _.pluck($("#class-user-add-token-search").tokenInput('get'), 'name');
+    console.log(users);
+  })
+
   $(".show-hide-pw").on('click', function(){
     if ($(this).children('span').hasClass('glyphicon-eye-open')) {
       $(this).children('span').removeClass('glyphicon-eye-open').addClass('glyphicon-eye-close');
@@ -151,6 +158,10 @@ $(function() {
       $(this).children('span').removeClass('glyphicon-eye-close').addClass('glyphicon-eye-open');
       $(this).prev(':input').prop("type", "password");   
     }
+  });
+
+  $('#class-add-user-modal').on('show.bs.modal', function (event) {
+    classAddUserTable();
   });
 
   //helpers!
@@ -481,6 +492,7 @@ $(function() {
       $("#class-detail-urn").prop('disabled', true);
       insertClassData(details);
       classUserTable(urn);
+      $("#class-user-add-token-search").tokenInput(tokenizeUserData(urn), {preventDuplicates: true, theme: 'facebook'});
     }
   }
   function classUpdate(){
@@ -526,10 +538,13 @@ $(function() {
        "initComplete": function(){
           registerClassUserDetail();
         },
-       "bPaginate": false,
-       "oSearch": {"sSearch": "",
-        "bRegex": true
-       },
+       "paging":   false,
+       "ordering": false,
+       "filter": false,
+       "info":     false,
+       //"oSearch": {"sSearch": "",
+       // "bRegex": true
+       //},
        //"order": [[ 1, "asc" ]],
        "columns": [
         { "data": "checkbox"},
@@ -575,6 +590,23 @@ $(function() {
         message("Successfully deleted: "+urn+".", "success");
         refreshClass();
       });
+  }
+  function tokenizeUserData(disable_urn){
+    var without_current_class = _.filter(user_data, function(val){
+      if (_.contains(_.keys(val.classes), disable_urn)){
+        return false
+      } else {
+        return true;
+      }
+    });
+    var user_tokens = _.map(without_current_class, function(val){
+      var output = {};
+      output.id = val.username;
+      output.name = val.username;
+      return output;
+    })
+    console.log(user_tokens);
+    return user_tokens;
   }
   function bulkUserUpdate(action, state){
     var users = getChecked(user_table);

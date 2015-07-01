@@ -138,20 +138,38 @@
           <h4 class="panel-title">
             <a role="button" data-toggle="collapse" href="#class-members" class="pull-left">Class Members</a>     
           </h4>
-          <button type="button" class="btn btn-primary btn-xs pull-right">Add Users</button>  
+          <button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#class-add-user-modal">Add Users</button>  
         </div>
         <div id="class-members" class="panel-collapse collapse in" role="tabpanel">
           <div class="panel-body">
-            <table id="class_detail_table" class="display compact" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>User</th>
-                  <th>Role</th>
-                  <th>Remove from Class</th>
-                </tr>
-              </thead>
-            </table>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <table id="class_detail_table" class="display compact" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th></th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            </div>
+            <div class="row">
+              <form class="form-inline">
+                <div class="form-group">
+                  <input type="text" class="form-control writer" id="class-user-add-token-search" placeholder="Add Users...">
+                </div>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add as <span class="caret"/></button>
+                    <ul class="dropdown-menu">
+                      <li><a href="#" class="class-user-add" data-role="restricted">Restricted</a></li>
+                      <li><a href="#" class="class-user-add" data-role="privileged">Privileged</a></li>
+                    </ul>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -170,7 +188,7 @@
      <div class="pull-right">
      <h2>
        <div class="btn-group" id="bulk-action-button">
-         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bulk Action <span class="caret" /></button>
+         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bulk Action <span class="caret"/></button>
          <ul class="dropdown-menu">
            <li><a href="#" class="user-bulk" data-action="enabled" data-state="true">Enable</a></li>
            <li><a href="#" class="user-bulk" data-action="enabled" data-state="false">Disable</a></li>
@@ -322,32 +340,6 @@
                 <a data-toggle="collapse" data-parent="#ChangePwAccordion" href="#ChangePwCollapse"><span class="glyphicon glyphicon-chevron-down"></span> Change Password</a>
               </h4>
             </div>
-            <div id="ChangePwCollapse" class="panel-collapse collapse">
-              <div class="panel-body">
-                <form id="ChangePwForm" class="form-horizontal">
-                  <div class="form-group">
-                    <label class="col-md-5 control-label">Admin Password</label>
-                    <div class="col-md-6">
-                      <input type="password" class="form-control" id="user-detail-change-pw-admin" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-md-5 control-label">New Password for User</label>
-                    <div class="col-md-6">
-                      <div class="input-group-sm input-group">
-                        <input type="password" class="form-control writer" id="user-detail-change-pw-user" />
-                        <span class="input-group-addon show-hide-pw"><span class="glyphicon glyphicon-eye-open"></span></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <div class="col-md-5 col-md-offset-3">
-                      <button type="submit" class="btn btn-default" id="user-detail-change-pw-submit">Change</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -387,6 +379,15 @@
        <h4 class="modal-title" id="user-modal-title">Adding Users to class: <span id="class-add-user-modal-urn"></span></h4>
       </div>
       <div class="modal-body">
+        <table id="class-add-user-table" class="display compact" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Role</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -403,6 +404,7 @@
  <script src="js/underscore.js"></script>
  <script src="js/app.js"></script>  
  <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+ <script src="js/jquery.tokeninput.js"></script>
  <script src="js/chosen.jquery.min.js"></script>
 
 </body>
