@@ -212,8 +212,8 @@ $(function() {
         val.urn=key;
         val.member_count = _.size(val.usernames);
         val.campaign_count = _.size(val.campaigns);
-        val.edit_button = '<button type="button" class="btn btn-success class-detail" data-urn="'+val['urn']+'">Edit</button>'
-        //val.delete_button = '<button type="button" class="btn btn-success disabled" data-toggle="modal" data-target="#detail-modal" data-uuid="'+val['urn']+'">Edit</button>'
+        val.edit_button = '<button type="button" class="btn btn-primary class-detail" data-urn="'+val['urn']+'">Edit</button>'
+        val.delete_button = '<button type="button" class="btn btn-danger class-delete" data-urn="'+val['urn']+'">Delete</button>'
         return val;
       });
       fun = fun || function(){ return true }
@@ -249,7 +249,8 @@ $(function() {
         }
         val.campaign_count = _.size(val.campaigns);
         val.class_count = _.size(val.classes);
-        val.edit_button = '<button type="button" class="btn btn-success user-detail" data-username="'+val['username']+'">Edit</button>'
+        val.edit_button = '<button type="button" class="btn btn-primary user-detail" data-username="'+val['username']+'">Edit</button>'
+        val.delete_button = '<button type="button" class="btn btn-danger user-delete" data-username="'+val['username']+'">Delete</button>'
         return val;
       });
       fun = fun || function(){ return true }
@@ -280,7 +281,8 @@ $(function() {
         { "data": "permissions.enabled" },
         { "data": "class_count" },
         { "data": "campaign_count" },
-        { "data": "edit_button" }
+        { "data": "edit_button" },
+        { "data": "delete_button"}
        ]
       });
     } else {
@@ -296,6 +298,11 @@ $(function() {
       var username = $(this).data('username');
       var user_details = dtDataFromCell($(this), user_table);
       displayUserDetail(user_details);
+    });
+    $(".user-delete").click(function(e){
+      e.preventDefault();
+      var username = $(this).data('username');
+      deleteUser(username);
     });
   };
   function userDetailCreate(){
@@ -379,7 +386,8 @@ $(function() {
         { "data": "urn" },
         { "data": "member_count" },
         { "data": "campaign_count" },
-        { "data": "edit_button" }
+        { "data": "edit_button" },
+        { "data": "delete_button" }
        ]
       });
     } else {
@@ -425,6 +433,11 @@ $(function() {
       var urn = $(this).data('urn');
       var class_details = dtDataFromCell($(this), class_table);
       displayClassDetail(urn, class_details);
+    });
+    $(".class-delete").click(function(e){
+      e.preventDefault();
+      var urn = $(this).data('urn');
+      deleteClass(urn);
     });
   }
   function displayClassMain(){
@@ -516,6 +529,13 @@ $(function() {
     })
     $("#class-detail-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
   }
+  function deleteClass(urn){
+    if(!confirm("Are you sure you want to delete the class: "+urn+"? This cannot be undone!")) return;
+      oh.class.delete({class_urn: urn}).done(function(){
+        message("Successfully deleted: "+urn+".", "success");
+        refreshClass();
+      });
+  }
   function bulkUserUpdate(action, state){
     var users = getChecked(user_table);
     var count = (users.length - 1);
@@ -550,7 +570,7 @@ $(function() {
     var to_delete = user_array.toString();
     if(!confirm("Are you sure you want to delete the following users: "+to_delete+"? This cannot be undone!")) return;
       oh.user.delete({user_list: to_delete}).done(function(){
-        message("Successfully delete users!", "success");
+        message("Successfully deleted users!", "success");
         refreshUser();
       });
   }
