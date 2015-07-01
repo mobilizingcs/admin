@@ -7,7 +7,7 @@ oh.callback("done", function(x, status, req){
 
 //global error handler. In ohmage 200 means unauthenticated
 oh.callback("error", function(msg, code, req){
-	(code == 200) ? window.location.replace("/login.html") : message("Error!\n" + msg);
+	(msg.match("token") || msg.match('Authentication credentials were not provided') || msg.match("New accounts aren't allowed to use this service")) ? window.location.replace("/login.html") : message("Error!\n" + msg);
 });
 
 function message(msg, type){ //global message function to pass messages to user.
@@ -63,16 +63,16 @@ $(function() {
   })
 
   $('#audits_table').on('click', 'tbody tr', function () {
-      var tr = $(this).closest('tr');
-      var row = audits_table.row( tr );
-      if ( row.child.isShown() ) { //row is open, close.
-          row.child.hide();
-          tr.removeClass('shown');
-      }
-      else { // open row
-          row.child( audit_row(row.data()) ).show();
-          tr.addClass('shown');
-      }
+    var tr = $(this).closest('tr');
+    var row = audits_table.row( tr );
+    if ( row.child.isShown() ) { //row is open, close.
+      row.child.hide();
+      tr.removeClass('shown');
+    }
+    else { // open row
+      row.child( audit_row(row.data()) ).show();
+      tr.addClass('shown');
+    }
   });
 
   $("#new-user-button").click(function(e){
@@ -100,49 +100,32 @@ $(function() {
   $("#class-detail-metadata-save").click(function(e){
     e.preventDefault();
     if ($(this).hasClass('edit')) {
-      oh.class.update({
-        class_urn: $("#class-detail-urn").val(),
-        class_name: $("#class-detail-name").val(),
-        description: $("#class-detail-description").val()        
-      }).done(function(){
-        message($("#class-detail-urn").val() + " updated.", "success");
-      });
+      classUpdate();
     } else {
-      var new_urn = $("#class-detail-urn").val()
-      oh.class.create({
-        class_urn: new_urn,
-        class_name: $("#class-detail-name").val(),
-        description: $("#class-detail-description").val()
-      }).done(function(){
-        message(new_urn + " created!", "success");
-        $("#class-detail-urn").prop("disabled", true);
-        $("#class-members").collapse('show');
-        $("#class-detail-metadata-save").addClass('edit');
-        classUserTable(new_urn);
-      });
+      classCreate();
     }
   });
 
-  $('#user-detail-password').change(function() {
+  $('#user-detail-password').keyup(function() {
     if ($("#user-detail-save").hasClass('edit')) {
-      $("#user-detail-admin-password-div").fadeIn(300);
+      $("#user-detail-admin-password-div").is(":visible") ? true : $("#user-detail-admin-password-div").fadeIn(300);
     }
   });
 
-  $("#user-detail-save").on('click', function(e) {
+  $("#user-detail-save").on('click', function(e) { //TODO: refactor this.
     e.preventDefault();
     if ($(this).hasClass('edit')) {
-      //$("#user-detail-password").val == '' ?  (
+      if ($("#user-detail-password").val == '') {
         userDetailUpdate(function(){
           message("Successfully updated user details", "success")
-        })
-      //) : (
-      //  userUpdatePassword(function(){
-      //    userDetailUpdate(function(){
-      //      message("Successfully updated user details", "success")
-      //    })
-      //  })
-      //)
+        });
+      } else {
+        userUpdatePassword(function(){
+          userDetailUpdate(function(){
+            message("Successfully updated user details", "success")
+          });
+        });
+      }
     } else { 
      userDetailCreate();
     }
@@ -487,6 +470,30 @@ $(function() {
       insertClassData(details);
       classUserTable(urn);
     }
+  }
+  function classUpdate(){
+    var class_urn = $("#class-detail-urn").val()
+    oh.class.update({
+      class_urn: class_urn,
+      class_name: $("#class-detail-name").val(),
+      description: $("#class-detail-description").val()        
+    }).done(function(){
+      message(class_urn + " updated.", "success");
+    });
+  }
+  function classCreate(){
+    var new_urn = $("#class-detail-urn").val()
+    oh.class.create({
+      class_urn: new_urn,
+      class_name: $("#class-detail-name").val(),
+      description: $("#class-detail-description").val()
+    }).done(function(){
+      message(new_urn + " created!", "success");
+      classSearch(function(){
+        var new_class_details = _.findWhere(class_data, {urn: new_urn})
+        displayClassDetail(new_urn, new_class_details);
+      });
+    });
   }
   function classUserTable(urn){
     oh.class.read({class_urn_list: urn}).done(function(data){
