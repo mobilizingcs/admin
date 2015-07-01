@@ -146,8 +146,8 @@ $(function() {
   $(".class-user-add").click(function(e){
     e.preventDefault();
     var role = $(this).data('role');
-    var users = _.pluck($("#class-user-add-token-search").tokenInput('get'), 'name');
-    console.log(users);
+    var users = $("#class-user-add-token-search")[0].selectize.items;
+    bulkUserRole($("#class-detail-urn").val(), users, role)
   })
 
   $(".show-hide-pw").on('click', function(){
@@ -158,10 +158,6 @@ $(function() {
       $(this).children('span').removeClass('glyphicon-eye-close').addClass('glyphicon-eye-open');
       $(this).prev(':input').prop("type", "password");   
     }
-  });
-
-  $('#class-add-user-modal').on('show.bs.modal', function (event) {
-    classAddUserTable();
   });
 
   //helpers!
@@ -364,6 +360,18 @@ $(function() {
       fun();
     });
   }
+  function bulkUserRole(class_urn, user_array, role){
+    var user_role_list_add = user_array.join(';'+role+',') + ";"+role;
+    oh.class.update({
+      class_urn: class_urn,
+      user_role_list_add: user_role_list_add
+    }).done(function(){
+      message("Successfully added users", "success");
+      userSearch(function(){
+        displayClassDetail(class_urn);
+      })
+    });
+  }
   function displayUserDetail(details){
     $("#user-div").hide();
     $("#new-user-button").hide();
@@ -459,7 +467,7 @@ $(function() {
       e.preventDefault();
       var urn = $(this).data('urn');
       var class_details = dtDataFromCell($(this), class_table);
-      displayClassDetail(urn, class_details);
+      displayClassDetail(urn);
     });
     $(".class-delete").click(function(e){
       e.preventDefault();
@@ -475,7 +483,7 @@ $(function() {
     $("#class-detail-urn-title").hide();
     refreshClass();
   }
-  function displayClassDetail(urn, details){
+  function displayClassDetail(urn){
     $("#back-to-class-button").show();
     $("#new-class-button").hide();
     $("#class_table_div").hide();
@@ -490,9 +498,20 @@ $(function() {
       $("#class-detail-urn-title").show().text(urn);
       $("#class-detail-metadata-save").addClass("edit");
       $("#class-detail-urn").prop('disabled', true);
-      insertClassData(details);
+      insertClassData(urn);
       classUserTable(urn);
-      $("#class-user-add-token-search").tokenInput(tokenizeUserData(urn), {preventDuplicates: true, theme: 'facebook'});
+      if ($("#class-user-add-token-search")[0].selectize){
+        $("#class-user-add-token-search")[0].selectize.clear();
+        $("#class-user-add-token-search")[0].selectize.destroy();
+      }
+      $("#class-user-add-token-search").selectize({
+        persist: false,
+        maxItems: null,
+        valueField: 'name',
+        labelField: 'name',
+        searchField: ['name'],
+        options: tokenizeUserData(urn),
+      });
     }
   }
   function classUpdate(){
@@ -515,7 +534,7 @@ $(function() {
       message(new_urn + " created!", "success");
       classSearch(function(){
         var new_class_details = _.findWhere(class_data, {urn: new_urn})
-        displayClassDetail(new_urn, new_class_details);
+        displayClassDetail(new_urn);
       });
     });
   }
@@ -566,8 +585,9 @@ $(function() {
       roleUpdateButton(this);
     }); 
   }
-  function insertClassData(details){
-    $("#class-detail-urn").val(details.urn).prop('disabled', true);
+  function insertClassData(urn){
+    var details = _.findWhere(class_data, {urn: urn})
+    $("#class-detail-urn").val(urn).prop('disabled', true);
     $("#class-detail-name").val(details.name);
     $("#class-detail-description").val(details.description);
     insertCampaignList(details);
@@ -605,7 +625,6 @@ $(function() {
       output.name = val.username;
       return output;
     })
-    console.log(user_tokens);
     return user_tokens;
   }
   function bulkUserUpdate(action, state){
