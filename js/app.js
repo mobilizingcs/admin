@@ -259,6 +259,10 @@ $(function() {
        "oSearch": {"sSearch": "",
         "bRegex": true
        },
+       "aoColumnDefs": [
+          { 'bSortable': false, 'aTargets': [ 0, 11, 12] },
+          { 'bSearchable': false, 'aTargets': [ 0, 11, 12] }
+       ],
        "order": [[ 1, "asc" ]],
        "columns": [
         { "data": 'checkbox'},
@@ -389,6 +393,10 @@ $(function() {
        "oSearch": {"sSearch": "",
         "bRegex": true
        },
+       "aoColumnDefs": [
+          { 'bSortable': false, 'aTargets': [ 4, 5] },
+          { 'bSearchable': false, 'aTargets': [ 4, 5] }
+       ],
        "columns": [
         { "data": "name" },
         { "data": "urn" },
