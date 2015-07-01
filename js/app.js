@@ -123,12 +123,26 @@ $(function() {
     }
   });
 
+  $('#user-detail-password').change(function() {
+    if ($("#user-detail-save").hasClass('edit')) {
+      $("#user-detail-admin-password-div").fadeIn(300);
+    }
+  });
+
   $("#user-detail-save").on('click', function(e) {
     e.preventDefault();
     if ($(this).hasClass('edit')) {
-     userDetailUpdate(function(){
-       message("Successfully updated user details", "success")
-     });
+      //$("#user-detail-password").val == '' ?  (
+        userDetailUpdate(function(){
+          message("Successfully updated user details", "success")
+        })
+      //) : (
+      //  userUpdatePassword(function(){
+      //    userDetailUpdate(function(){
+      //      message("Successfully updated user details", "success")
+      //    })
+      //  })
+      //)
     } else { 
      userDetailCreate();
     }
@@ -150,21 +164,6 @@ $(function() {
       $(this).children('span').removeClass('glyphicon-eye-close').addClass('glyphicon-eye-open');
       $(this).prev(':input').prop("type", "password");   
     }
-  });
-
-  $("#user-detail-change-pw-submit").on('click', function(e){
-    e.preventDefault();
-    oh.user.change_password({
-      user: me,
-      username: $("#user-detail-username").val(),
-      password: $("#user-detail-change-pw-admin").val(),
-      new_password: $("#user-detail-change-pw-user").val()
-    }).done(function(){
-      alert("Successfully changed password");
-      $("#ChangePwCollapse").collapse('hide');
-      $("#user-detail-change-pw-admin").val('');
-      $("#user-detail-change-pw-user").val('');
-    });
   });
 
   //helpers!
@@ -348,23 +347,39 @@ $(function() {
       fun();
     });
   };
+  function userUpdatePassword(fun){
+    var user = $("#user-detail-username").val()
+    oh.user.change_password({
+      user: me,
+      username: user,
+      password: $("#user-detail-admin-password").val(),
+      new_password: $("#user-detail-password").val()
+    }).done(function(){
+      $("#user-detail-admin-password").val('');
+      $("#user-detail-password").val('');
+      $("#user-detail-admin-password-div").hide();
+      fun = fun || function(){ return true };
+      fun();
+    });
+  }
   function displayUserDetail(details){
     $("#user-div").hide();
     $("#new-user-button").hide();
     $("#back-to-user-button").show();
     $("#user-detail-div").show();
     $("#bulk-action-button").hide();
-
+    $("#user-detail-admin-password-div").hide();
     if (details == undefined){
       $("#user-detail-title").hide();
-      $("#user-detail-save").removeClass("edit");
+      $("#user-detail-save").removeClass("edit").text('Create User');
       $("#user-detail-username").prop('disabled', false);
+      $("#user-detail-enabled").prop('checked', true);
+      $("#user-detail-new-account").prop('checked', true);
     } else {
       $("#user-detail-title").show().text(details.username);
-      $("#user-detail-save").addClass("edit");
+      $("#user-detail-save").addClass("edit").text('Update User');
       $("#user-detail-username").prop('disabled', true);
       insertUserData(details);
-
     }
   }
   function displayUserMain(){
