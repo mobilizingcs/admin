@@ -106,16 +106,20 @@ $(function() {
     }
   });
 
-  $('#user-detail-password').keyup(function() {
+  $('#user-detail-password').keyup(function() { //TODO: refactor, too much logic here.
     if ($("#user-detail-save").hasClass('edit')) {
-      $("#user-detail-admin-password-div").is(":visible") ? true : $("#user-detail-admin-password-div").fadeIn(300);
+      if ($("#user-detail-password").val() == '') {
+        $("#user-detail-admin-password-div").fadeOut(300);
+      } else {
+        $("#user-detail-admin-password-div").is(":visible") ? true : $("#user-detail-admin-password-div").fadeIn(300);
+      }
     }
   });
 
   $("#user-detail-save").on('click', function(e) { //TODO: refactor this.
     e.preventDefault();
     if ($(this).hasClass('edit')) {
-      if ($("#user-detail-password").val == '') {
+      if ($("#user-detail-password").val() == '') {
         userDetailUpdate(function(){
           message("Successfully updated user details", "success")
         });
