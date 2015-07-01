@@ -148,7 +148,7 @@ $(function() {
     var role = $(this).data('role');
     var users = $("#class-user-add-token-search")[0].selectize.items;
     bulkUserRole($("#class-detail-urn").val(), users, role)
-  })
+  });
 
   $(".show-hide-pw").on('click', function(){
     if ($(this).children('span').hasClass('glyphicon-eye-open')) {
@@ -372,6 +372,18 @@ $(function() {
       })
     });
   }
+  function bulkUserClassRemove(class_urn, user_array){
+    var user_list_remove = user_array.join(',');
+    oh.class.update({
+      class_urn: class_urn,
+      user_list_remove: user_list_remove
+    }).done(function(){
+      message("Successfully removed users", "success");
+      userSearch(function(){
+        displayClassDetail(class_urn);
+      })
+    });
+  }
   function displayUserDetail(details){
     $("#user-div").hide();
     $("#new-user-button").hide();
@@ -543,7 +555,7 @@ $(function() {
       class_detail_data = $.map(data[urn].users, function(i,v){
         var role_button = '<button type="button" class="btn btn-default btn-sm role-button">'+i+'</button>';
         var checkbox = '<input type="checkbox" class="rowcheckbox">'
-        var remove_button = '<button type="button" class="btn btn-danger btn-sm class-remove-user-button">Remove</button>';
+        var remove_button = '<button type="button" class="btn btn-danger btn-sm class-user-remove" data-username="'+v+'">Remove</button>';
         return { "checkbox":checkbox, 
                  "username": v, 
                  "role_button": role_button, 
@@ -584,6 +596,12 @@ $(function() {
     $(".role-button").on('click', function (){
       roleUpdateButton(this);
     }); 
+    $(".class-user-remove").click(function(e){
+      e.preventDefault();
+      var user_array = []
+      user_array.push($(this).data('username'));
+      bulkUserClassRemove($("#class-detail-urn").val(), user_array);
+    })
   }
   function insertClassData(urn){
     var details = _.findWhere(class_data, {urn: urn})
