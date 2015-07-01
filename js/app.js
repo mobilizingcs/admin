@@ -633,8 +633,7 @@ $(function() {
       if (_.contains(details.campaigns, v.urn)){
         el.prop("selected", true);
       }
-    })
-    $("#class-detail-campaigns").chosen({search_contains: true}).trigger('chosen:updated');
+      //TODO: reimplement with selectize
   }
   function deleteClass(urn){
     if(!confirm("Are you sure you want to delete the class: "+urn+"? This cannot be undone!")) return;
