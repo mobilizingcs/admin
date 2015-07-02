@@ -53,6 +53,7 @@ $(function() {
   oh.user.whoami().done(function(username){
     me = username;
     oh.keepalive();
+    loadServerInfo();
     oh.user.info().done(function(x){
       if (x[username]['permissions']['is_admin'] == false) {
         alert('This tool is only available for administrators. You will now be redirected...');
@@ -211,6 +212,17 @@ $(function() {
   });
 
   //helpers!
+  function loadServerInfo(){
+    oh.config.read().done(function(data){
+      var config_read_items = ["application_name", "mobility_enabled", "default_campaign_creation_privilege", 
+                               "application_version", "auth_token_lifetime", "maximum_parameter_size", 
+                               "default_survey_response_sharing_state", "self_registration_allowed", "maximum_request_size"]
+      _.each(config_read_items, function(v){
+        $('#'+v).text(data[v]);
+      });
+      $("#application_build").text(data.application_build).attr('href', "https://github.com/ohmage/server/commit/"+data.application_build);
+    });
+  }
   function createSummary(){
     $("#campaign_count").text(campaign_count);
     var audit_total_count = _.size(audit_data);
