@@ -201,6 +201,11 @@ $(function() {
     $("#user-detail-save").prop('disabled', false)
   });
 
+  $(":input[id^='user-detail'][type=checkbox]").change(function(){
+    $(this).addClass('changed');
+    $("#user-detail-save").prop('disabled', false)    
+  })
+
   $(".show-hide-pw").on('click', function(){
     if ($(this).children('span').hasClass('glyphicon-eye-open')) {
       $(this).children('span').removeClass('glyphicon-eye-open').addClass('glyphicon-eye-close');
