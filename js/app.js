@@ -524,6 +524,29 @@ $(function() {
       classUserTable(urn);
     }
   }
+  function classUpdateCampaign(class_urn){ //obviously needs a refactor
+    var class_details = _.findWhere(class_data, {urn: class_urn});
+    var current_campaign_list = class_details.campaigns;
+    var new_campaign_list = $("#class-detail-campaigns")[0].selectize.items;
+    var to_add = _.difference(new_campaign_list, current_campaign_list);
+    var to_del = _.difference(current_campaign_list, new_campaign_list);
+    _.each(to_add, function(v,i){
+      oh.campaign.update({
+        campaign_urn: v,
+        class_list_add: class_urn
+      }).done(function(){
+        console.log('done update to add a class to: '+v);
+      });
+    })
+    _.each(to_del, function(v,i){
+      oh.campaign.update({
+        campaign_urn: v,
+        class_list_remove: class_urn
+      }).done(function(){
+        console.log('done update to remove a class to: '+v);
+      });
+    })
+  }
   function classUpdate(){
     var class_urn = $("#class-detail-urn").val()
     oh.class.update({
@@ -531,6 +554,7 @@ $(function() {
       class_name: $("#class-detail-name").val(),
       description: $("#class-detail-description").val()        
     }).done(function(){
+      classUpdateCampaign(class_urn);
       message(class_urn + " updated.", "success");
     });
   }
