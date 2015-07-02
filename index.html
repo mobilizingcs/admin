@@ -20,13 +20,27 @@
 <body>
 
 <div class="container">
- <div class="row">
-   <div class="page-header">
-     <h1>
-       <span>Admin Tool</span>
-       <span class="glyphicon glyphicon-refresh pull-right" id="refresh-button"/>
-     </h1>
-  </div>
+  <div class="row">
+    <div class='page-header'>
+      <div class='btn-toolbar pull-right'>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="image"> 
+              <div class="icon-remove blue delete">   
+                <span style="position:relative;font-size:3em;" class="glyphicon glyphicon-info-sign" id="alert-button" data-toggle="popover" title="" data-placement="left" data-content=""></span>
+                    <i class="delete-button"></i>
+              </div>  
+            </div>
+
+              <!--<span style="position:relative;font-size:3em;" class="glyphicon glyphicon-info-sign" id="alert-button" data-toggle="popover" title="" data-placement="left" data-content=""></span>-->
+          </div>
+          <div class="col-md-6">
+          <span style="font-size:3em;" class="glyphicon glyphicon-refresh" id="refresh-button"></span>
+          </div>
+        </div>
+      </div>
+      <h1>Admin Tool</h1>
+    </div>
  </div> <!-- end row -->
  <div class="row">
  <div class="col-md-2">
@@ -38,23 +52,27 @@
    </ul>
  </div>
  <div class="col-md-10" id="main">
-    <div id="error-div" style="display:hidden;"></div> 
+    <!--<div id="error-div" style="display:hidden;"></div> -->
    <!-- SUMMARY SECTION -->
    <div id="summary">
    <div class="row">
    <div class="row">
      <div class="col-md-10">
-     <h2>Summary</h2>
+       <h2>Summary</h2>
      </div>
    </div>
      <div class="col-md-5 well" id="campaign_summary">
      <h4>Info</h4>
-     <p>Total Campaigns: <span id="campaign_count">0</span></p>
-     <p>Total Classes: <span id="class_count">0</span></p>
-     <p>Total Users: <span id="user_count">0</span></p>     
+     <table class="table table-bordered table-striped">
+      <th>Object</th>
+      <th>Count</th>
+      <tr><td>Campaigns</td><td><span id="campaign_count">0</span></td></tr>
+      <tr><td>Classes</td><td><span id="class_count">0</span></td></tr>
+      <tr><td>Users</td><td><span id="user_count">0</span></td></tr>
+     </table>   
      </div>
      <div class="col-md-5 col-md-offset-1 well" id="activity_summary">
-     <h4>Recent Activity:</h4>
+     <h4>Recent Activity</h4>
      <table class="table table-bordered table-striped">
       <th>API calls in the last 15 minutes</th>
       <th>Count</th>
@@ -148,7 +166,7 @@
                 <form class="form-inline">
                   <div class="form-group">
                     <div class="input-group">
-                    <input type="text" class="form-control search" id="class-user-add-token-search" placeholder="Add users to class...">
+                    <input type="text" class="form-control search" id="class-user-add-select" placeholder="Add users to class...">
                       <span class="input-group-btn">
                         <div class="btn-group">
                           <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-plus"/></button>

@@ -7,13 +7,33 @@ oh.callback("done", function(x, status, req){
 
 //global error handler. In ohmage 200 means unauthenticated
 oh.callback("error", function(msg, code, req){
-	(msg.match("token") || msg.match('Authentication credentials were not provided') || msg.match("New accounts aren't allowed to use this service")) ? window.location.replace("/login.html") : message("Error!\n" + msg);
+	(msg.match("token") || msg.match('Authentication credentials were not provided') || msg.match("New accounts aren't allowed to use this service")) ? window.location.replace("/login.html") : message(msg);
 });
 
 function message(msg, type){ //global message function to pass messages to user.
   type = type || "danger"
-  $("#error-div").empty().append('<div class="alert alert-' + type + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + msg + '</div>');
-  $("#error-div").fadeIn(100);                                                                                                                                                                                                                   
+  //var popover_template = '<div class="popover" role="tooltip"><div class="arrow"></div><button type="button" class="close" data-dismiss="popover" aria-hidden="true">&times;</button><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+
+  var title = type == 'danger' ? "Error" : "Success";
+  if (type == 'danger'){
+    window.scrollTo(0,0);
+    $("#alert-button").popover('destroy').popover({content: msg, title: title, container: 'body'});
+    $("#alert-button")
+      .removeClass('glyphicon-info-sign').addClass('glyphicon-exclamation-sign').addClass('red')
+      .css('color', 'red')
+      .fadeIn(200)
+      .popover('show');  
+    $(".popover-title").css('color', 'red')
+  } else {
+    $("#alert-button").popover('destroy').popover({content: msg, title: title, container: 'body'});
+    $("#alert-button")
+      .removeClass('glyphicon-exclamation-sign').addClass('glyphicon-info-sign')
+      .css('color', 'green')
+      .fadeIn(200);
+    $(".popover-title").css('color', 'green')
+  }
+  //$("#error-div").empty().append('<div class="alert alert-' + type + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + msg + '</div>');
+  //$("#error-div").fadeIn(100);                                                                                                                                                                                                                   
 };
 
 //main app
@@ -49,6 +69,10 @@ $(function() {
     } else if (nav_name == 'users'){
       displayUserMain();
     }
+  });
+
+  $("#alert-button-dismiss").click(function(){
+    $("[id^='alert-button']").hide();
   });
 
   $("#refresh-button").click(function(){
@@ -154,8 +178,18 @@ $(function() {
   $(".class-user-add").click(function(e){
     e.preventDefault();
     var role = $(this).data('role');
-    var users = $("#class-user-add-token-search")[0].selectize.items;
+    var users = $("#class-user-add-select")[0].selectize.items;
     bulkUserRole($("#class-detail-urn").val(), users, role)
+  });
+
+  $(":input[id^='class-detail']").keyup(function(){
+    $(this).addClass('changed');
+    $("#class-detail-metadata-save").prop('disabled', false)
+  });
+
+  $(":input[id^='user-detail']").keyup(function(){
+    $(this).addClass('changed');
+    $("#user-detail-save").prop('disabled', false)
   });
 
   $(".show-hide-pw").on('click', function(){
@@ -405,10 +439,12 @@ $(function() {
       $("#user-detail-username").prop('disabled', false);
       $("#user-detail-enabled").prop('checked', true);
       $("#user-detail-new-account").prop('checked', true);
+      $("#user-detail-save").prop('disabled', false)
     } else {
       $("#user-detail-title").show().text(details.username);
       $("#user-detail-save").addClass("edit").text('Update User');
       $("#user-detail-username").prop('disabled', true);
+      $("#user-detail-save").prop('disabled', true)
       insertUserData(details);
     }
   }
@@ -513,11 +549,14 @@ $(function() {
       $("#class-detail-urn-title").hide();
       $("#class-detail-metadata-save").removeClass("edit");
       $("#class-detail-urn").prop('disabled', false);
+      $("#class-detail-metadata-save").prop('disabled', false)
+      insertCampaignList(null);
     } else {
       $("#class-members").addClass('in');
       $("#class-detail-urn-title").show().text(urn);
       $("#class-detail-metadata-save").addClass("edit");
       $("#class-detail-urn").prop('disabled', true);
+      $("#class-detail-metadata-save").prop('disabled', true)
       insertClassData(urn);
       insertCampaignList(urn);
       insertClassUserAdd(urn);
@@ -526,7 +565,7 @@ $(function() {
   }
   function classUpdateCampaign(class_urn){ //obviously needs a refactor
     var class_details = _.findWhere(class_data, {urn: class_urn});
-    var current_campaign_list = class_details.campaigns;
+    var current_campaign_list = class_details ? class_details.campaigns : [];
     var new_campaign_list = $("#class-detail-campaigns")[0].selectize.items;
     var to_add = _.difference(new_campaign_list, current_campaign_list);
     var to_del = _.difference(current_campaign_list, new_campaign_list);
@@ -566,6 +605,7 @@ $(function() {
       description: $("#class-detail-description").val()
     }).done(function(){
       message(new_urn + " created!", "success");
+      classUpdateCampaign(null);
       classSearch(function(){
         var new_class_details = _.findWhere(class_data, {urn: new_urn})
         displayClassDetail(new_urn);
@@ -641,6 +681,7 @@ $(function() {
       $("#class-detail-campaigns")[0].selectize.clear();
       $("#class-detail-campaigns")[0].selectize.destroy();
     }
+    var selected = details ? details.campaigns : [];
     $("#class-detail-campaigns").selectize({
       persist: false,
       maxItems: null,
@@ -649,7 +690,7 @@ $(function() {
       searchField: ['urn', 'name'],
       dropdownParent: "body",
       options: campaign_data,
-      items: details.campaigns,
+      items: selected,
       render: {
           option: function(item, escape) {
               var label = item.name;
@@ -657,14 +698,17 @@ $(function() {
               return '<div>'+'<h6>'+escape(label)+' <small>'+escape(caption)+'</small></h6></div>';
           }
       },
+      onChange: function(){
+        $("#class-detail-metadata-save").prop('disabled', false);
+      }
     });
   }
   function insertClassUserAdd(urn){
-    if ($("#class-user-add-token-search")[0].selectize){
-      $("#class-user-add-token-search")[0].selectize.clear();
-      $("#class-user-add-token-search")[0].selectize.destroy();
+    if ($("#class-user-add-select")[0].selectize){
+      $("#class-user-add-select")[0].selectize.clear();
+      $("#class-user-add-select")[0].selectize.destroy();
     }
-    $("#class-user-add-token-search").selectize({
+    $("#class-user-add-select").selectize({
       persist: false,
       maxItems: null,
       valueField: 'username',
