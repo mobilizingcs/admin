@@ -242,10 +242,13 @@ $(function() {
     $("#user_count").text(_.size(user_data));
   };
   function reloadData(fun){
-    campaignSearch();
-    classSearch();
-    auditRead(get15minutesago());
-    userSearch(function(){
+    $.when(
+      campaignSearch(),
+      classSearch(),
+      auditRead(get15minutesago()),
+      userSearch()
+    ).done(function(){
+      console.log('apparently we are done?');
       fun();
     })
   };
@@ -260,7 +263,7 @@ $(function() {
     })
   };
   function campaignSearch(fun){
-    oh.campaign.search().done(function(campaigns){
+    return oh.campaign.search().done(function(campaigns){
       campaign_data = $.map(campaigns, function(val,key){
         val.urn = key;
         return val;
@@ -272,7 +275,7 @@ $(function() {
     });
   }
   function classSearch(fun){
-    oh.class.search().done(function(class_list){
+    return oh.class.search().done(function(class_list){
       class_data = $.map(class_list, function(val,key){
         val.urn=key;
         val.member_count = _.size(val.usernames);
@@ -286,7 +289,7 @@ $(function() {
     });
   }
   function auditRead(time, fun){
-    oh.audit.read({start_date: time}).done(function(audits){
+    return oh.audit.read({start_date: time}).done(function(audits){
       audit_data = $.map(audits, function(val,key){
         val.uuid = uuid();
         val.localtime = getLocalTime(val.timestamp);
@@ -300,7 +303,7 @@ $(function() {
     });
   }
   function userSearch(fun){
-    oh.user.search().done(function(user_list){
+    return oh.user.search().done(function(user_list){
       user_data = $.map(user_list, function(val,key){
         val.checkbox = '<input type="checkbox" class="rowcheckbox">'
         val.username=key;
