@@ -612,19 +612,27 @@ $(function() {
     $("#class-detail-description").val(details.description);
   }
   function insertCampaignList(urn){
+    var details = _.findWhere(class_data, {urn: urn})
     if ($("#class-detail-campaigns")[0].selectize){
       $("#class-detail-campaigns")[0].selectize.clear();
       $("#class-detail-campaigns")[0].selectize.destroy();
     }
-    console.log(campaign_data);
     $("#class-detail-campaigns").selectize({
       persist: false,
       maxItems: null,
       valueField: 'urn',
-      labelField: 'urn',
-      searchField: ['urn'],
+      labelField: 'name',
+      searchField: ['urn', 'name'],
       dropdownParent: "body",
       options: campaign_data,
+      items: details.campaigns,
+      render: {
+          option: function(item, escape) {
+              var label = item.name;
+              var caption = item.urn;
+              return '<div>'+'<h6>'+escape(label)+' <small>'+escape(caption)+'</small></h6></div>';
+          }
+      },
     });
   }
   function insertClassUserAdd(urn){
@@ -639,7 +647,7 @@ $(function() {
       labelField: 'username',
       searchField: ['username'],
       dropdownParent: "body",
-      options: usersWithoutClass(urn),
+      options: usersWithoutClass(urn)
     });
   }
   function deleteClass(urn){
