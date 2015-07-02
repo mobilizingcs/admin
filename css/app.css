@@ -47,6 +47,7 @@
     transform: rotate(359deg);
   }
 }
+/*
 .gly-rotate-90 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
   -webkit-transform: rotate(90deg);
@@ -86,44 +87,33 @@
   -ms-transform: scale(1, -1);
   -o-transform: scale(1, -1);
   transform: scale(1, -1);
-}
+}*/
 
 /* selectize input-group fix */
 .input-group .selectize-input{
   vertical-align:top;
 }
-
 .selectize-input.not-full > input {
   width: 100% !important;
 }
 
-/* some thing */
-.image:before {
-        content: "";
-        /*display: inline-block;*/
-        vertical-align: middle;
-      /*min-height: 150px;*/
-    }
-    
-    .image {
-        -moz-box-sizing: border-box;
-        float: left;
-        /*margin-bottom: 10px;*/
-        /*padding: 10px;*/
-    }
-    
-    .delete {
-      position: relative;
-      vertical-align: middle;
-      display: inline-block;
-    }
-
+/* remove for message icon */
+.message-icon:before {
+  vertical-align: middle;
+}   
+.message-icon {
+  -moz-box-sizing: border-box;
+  float: left;
+}
+.delete {
+  position: relative;
+  vertical-align: middle;
+  display: inline-block;
+}
 .delete .delete-button {
-    content: '';
-    position:absolute;
-     top:0;
-    right:0;
-    height: 20px;
-    width: 20px;
-    background: #F00;
+  position:absolute;
+  top:-10px;
+  right:0;
+  height: 20px;
+  width: 5px;
 }

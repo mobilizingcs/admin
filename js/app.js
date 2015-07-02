@@ -12,29 +12,35 @@ oh.callback("error", function(msg, code, req){
 
 function message(msg, type){ //global message function to pass messages to user.
   type = type || "danger"
-  //var popover_template = '<div class="popover" role="tooltip"><div class="arrow"></div><button type="button" class="close" data-dismiss="popover" aria-hidden="true">&times;</button><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-
-  var title = type == 'danger' ? "Error" : "Success";
-  if (type == 'danger'){
-    window.scrollTo(0,0);
-    $("#alert-button").popover('destroy').popover({content: msg, title: title, container: 'body'});
-    $("#alert-button")
-      .removeClass('glyphicon-info-sign').addClass('glyphicon-exclamation-sign').addClass('red')
-      .css('color', 'red')
-      .fadeIn(200)
-      .popover('show');  
-    $(".popover-title").css('color', 'red')
-  } else {
-    $("#alert-button").popover('destroy').popover({content: msg, title: title, container: 'body'});
-    $("#alert-button")
-      .removeClass('glyphicon-exclamation-sign').addClass('glyphicon-info-sign')
-      .css('color', 'green')
-      .fadeIn(200);
-    $(".popover-title").css('color', 'green')
-  }
-  //$("#error-div").empty().append('<div class="alert alert-' + type + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + msg + '</div>');
-  //$("#error-div").fadeIn(100);                                                                                                                                                                                                                   
+  var is_bad = type == 'danger' ? true : false;
+  createAlertPopover(msg, is_bad);                                                                                                                                                                                                              
 };
+
+function createAlertPopover(msg, is_bad){
+  var title = is_bad ? "Error" : "Success";
+  var color = is_bad ? "red" : "green";
+  var timeout = is_bad ? 5000 : 2000;
+  if (is_bad) { //ugh DRY this.
+    $('html, body').animate({scrollTop: 0}, 200, function(){
+    $("#alert-button")
+      .popover('destroy')
+      .popover({content: msg, title: title, container: 'body'})
+      .css('color', color)
+      .popover('show');
+      setTimeout(function() {
+          $('#alert-button').popover('hide');
+      }, timeout);
+    });
+  }
+  $("#alert-button")
+    .popover('destroy')
+    .popover({content: msg, title: title, container: 'body'})
+    .css('color', color)
+    .popover('show');
+    setTimeout(function() {
+        $('#alert-button').popover('hide');
+    }, timeout);
+}
 
 //main app
 $(function() {
@@ -71,8 +77,10 @@ $(function() {
     }
   });
 
-  $("#alert-button-dismiss").click(function(){
-    $("[id^='alert-button']").hide();
+  $("#alert-button").popover({title: 'Responses', content: 'Server Responses will be displayed here. Feel free to close this notif box -- it will only reappear when errors occur.', container: 'body'});
+
+  $(".delete-button").click(function(){
+    $("#message-icon-div").hide();
   });
 
   $("#refresh-button").click(function(){
