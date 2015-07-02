@@ -527,12 +527,12 @@ $(function() {
       $("#class-user-add-token-search").selectize({
         persist: false,
         maxItems: null,
-        valueField: 'name',
-        labelField: 'name',
-        searchField: ['name'],
+        valueField: 'username',
+        labelField: 'username',
+        searchField: ['username'],
         //inputClass: 'form-control selectize-input',
         dropdownParent: "body",
-        options: tokenizeUserData(urn),
+        options: usersWithoutClass(urn),
       });
     }
   }
@@ -633,6 +633,7 @@ $(function() {
       if (_.contains(details.campaigns, v.urn)){
         el.prop("selected", true);
       }
+    });
       //TODO: reimplement with selectize
   }
   function deleteClass(urn){
@@ -642,21 +643,11 @@ $(function() {
         refreshClass();
       });
   }
-  function tokenizeUserData(disable_urn){
+  function usersWithoutClass(disable_urn){
     var without_current_class = _.filter(user_data, function(val){
-      if (_.contains(_.keys(val.classes), disable_urn)){
-        return false
-      } else {
-        return true;
-      }
+      return _.contains(_.keys(val.classes), disable_urn) ? false : true;
     });
-    var user_tokens = _.map(without_current_class, function(val){
-      var output = {};
-      output.id = val.username;
-      output.name = val.username;
-      return output;
-    })
-    return user_tokens;
+    return without_current_class;
   }
   function bulkUserUpdate(action, state){
     var users = getChecked(user_table);
