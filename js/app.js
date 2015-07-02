@@ -519,21 +519,9 @@ $(function() {
       $("#class-detail-metadata-save").addClass("edit");
       $("#class-detail-urn").prop('disabled', true);
       insertClassData(urn);
+      insertCampaignList(urn);
+      insertClassUserAdd(urn);
       classUserTable(urn);
-      if ($("#class-user-add-token-search")[0].selectize){
-        $("#class-user-add-token-search")[0].selectize.clear();
-        $("#class-user-add-token-search")[0].selectize.destroy();
-      }
-      $("#class-user-add-token-search").selectize({
-        persist: false,
-        maxItems: null,
-        valueField: 'username',
-        labelField: 'username',
-        searchField: ['username'],
-        //inputClass: 'form-control selectize-input',
-        dropdownParent: "body",
-        options: usersWithoutClass(urn),
-      });
     }
   }
   function classUpdate(){
@@ -622,19 +610,37 @@ $(function() {
     $("#class-detail-urn").val(urn).prop('disabled', true);
     $("#class-detail-name").val(details.name);
     $("#class-detail-description").val(details.description);
-    insertCampaignList(details);
   }
-  function insertCampaignList(details){
-    $("#class-detail-campaigns option").remove();
-    _.each(campaign_data, function(v){
-      var el = $(document.createElement("option")).appendTo($("#class-detail-campaigns"));
-      el.attr("value",v.urn);
-      el.text(v.name + " ("+v.urn+")");
-      if (_.contains(details.campaigns, v.urn)){
-        el.prop("selected", true);
-      }
+  function insertCampaignList(urn){
+    if ($("#class-detail-campaigns")[0].selectize){
+      $("#class-detail-campaigns")[0].selectize.clear();
+      $("#class-detail-campaigns")[0].selectize.destroy();
+    }
+    console.log(campaign_data);
+    $("#class-detail-campaigns").selectize({
+      persist: false,
+      maxItems: null,
+      valueField: 'urn',
+      labelField: 'urn',
+      searchField: ['urn'],
+      dropdownParent: "body",
+      options: campaign_data,
     });
-      //TODO: reimplement with selectize
+  }
+  function insertClassUserAdd(urn){
+    if ($("#class-user-add-token-search")[0].selectize){
+      $("#class-user-add-token-search")[0].selectize.clear();
+      $("#class-user-add-token-search")[0].selectize.destroy();
+    }
+    $("#class-user-add-token-search").selectize({
+      persist: false,
+      maxItems: null,
+      valueField: 'username',
+      labelField: 'username',
+      searchField: ['username'],
+      dropdownParent: "body",
+      options: usersWithoutClass(urn),
+    });
   }
   function deleteClass(urn){
     if(!confirm("Are you sure you want to delete the class: "+urn+"? This cannot be undone!")) return;
