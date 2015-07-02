@@ -416,7 +416,7 @@ $(function() {
       class_urn: class_urn,
       user_role_list_add: user_role_list_add
     }).done(function(){
-      user_array.length > 1 ? message("Successfully added users", "success") : true;
+      message("Successfully added users", "success");
       userSearch(function(){
         displayClassDetail(class_urn);
       })
@@ -428,7 +428,7 @@ $(function() {
       class_urn: class_urn,
       user_list_remove: user_list_remove
     }).done(function(){
-      user_array.length > 1 ? message("Successfully removed users", "success") : true;
+      message("Successfully removed users", "success");
       userSearch(function(){
         displayClassDetail(class_urn);
       })
@@ -581,17 +581,13 @@ $(function() {
       oh.campaign.update({
         campaign_urn: v,
         class_list_add: class_urn
-      }).done(function(){
-        console.log('done update to add a class to: '+v);
-      });
+      })
     })
     _.each(to_del, function(v,i){
       oh.campaign.update({
         campaign_urn: v,
         class_list_remove: class_urn
-      }).done(function(){
-        console.log('done update to remove a class to: '+v);
-      });
+      })
     })
   }
   function classUpdate(){

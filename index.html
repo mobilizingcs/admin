@@ -49,38 +49,65 @@
      <li role="presentation"><a href="#" class="navs" >Audits</a></li>
    </ul>
  </div>
- <div class="col-md-10" id="main">
-    <!--<div id="error-div" style="display:hidden;"></div> -->
-   <!-- SUMMARY SECTION -->
-   <div id="summary">
-   <div class="row">
-   <div class="row">
-     <div class="col-md-10">
-       <h2>Summary</h2>
-     </div>
-   </div>
-     <div class="col-md-5 well" id="campaign_summary">
-     <h4>Info</h4>
-     <table class="table table-bordered table-striped">
-      <th>Object</th>
-      <th>Count</th>
-      <tr><td>Campaigns</td><td><span id="campaign_count">0</span></td></tr>
-      <tr><td>Classes</td><td><span id="class_count">0</span></td></tr>
-      <tr><td>Users</td><td><span id="user_count">0</span></td></tr>
-     </table>   
-     </div>
-     <div class="col-md-5 col-md-offset-1 well" id="activity_summary">
-     <h4>Recent Activity</h4>
-     <table class="table table-bordered table-striped">
-      <th>API calls in the last 15 minutes</th>
-      <th>Count</th>
-      <tr><td>Total</td><td><span id="total_calls">0</span></td></tr>
-      <tr><td>Success</td><td><span id="success_calls">0</span></td></tr>
-      <tr><td>Failure</td><td><span id="failure_calls">0</span></td></tr>
-     </table>
-     </div>
-   </div>
-   </div>
+  <div class="col-md-10" id="main">
+    <!-- SUMMARY SECTION -->
+    <div id="summary">
+    <div class="row">
+      <div class="col-md-10">
+        <h2>Summary</h2>
+      </div>
+    </div>
+    </div>
+    <div class="row">
+      <div class="col-md-5">
+        <div class="row">
+          <div class="col-md-12 well" id="campaign_summary">
+          <h4>Details</h4>
+          <table class="table table-bordered table-striped">
+           <th>Object</th>
+           <th>Count</th>
+           <tr><td>Campaigns</td><td><span id="campaign_count">0</span></td></tr>
+           <tr><td>Classes</td><td><span id="class_count">0</span></td></tr>
+           <tr><td>Users</td><td><span id="user_count">0</span></td></tr>
+          </table>   
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 well" id="activity_summary">
+          <h4>Activity (last 15min)</h4>
+          <table class="table table-bordered table-striped">
+           <th>API Calls</th>
+           <th>Count</th>
+           <tr><td>Total</td><td><span id="total_calls">0</span></td></tr>
+           <tr><td>Success</td><td><span id="success_calls">0</span></td></tr>
+           <tr><td>Failure</td><td><span id="failure_calls">0</span></td></tr>
+          </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5 col-md-offset-2">
+        <div class="row">
+          <div class="col-md-12 well">
+          <h4>Server Info</h4>
+          <table class="table table-bordered table-striped">
+           <th>Param</th>
+           <th>Setting</th>
+           <tr><td>application_build</td><td><span id="application_build">0</span></td></tr>
+           <tr><td>application_name</td><td><span id="application_name">0</span></td></tr>
+           <tr><td>mobility_enabled</td><td><span id="mobility_enabled">0</span></td></tr>
+           <tr><td>default_campaign_creation_privilege</td><td><span id="default_campaign_creation_privilege">0</span></td></tr>
+           <tr><td>application_version</td><td><span id="application_version">0</span></td></tr>
+           <tr><td>auth_token_lifetime</td><td><span id="auth_token_lifetime">0</span></td></tr>
+           <tr><td>maximum_parameter_size</td><td><span id="maximum_parameter_size">0</span></td></tr>
+           <tr><td>default_survey_response_sharing_state</td><td><span id="default_survey_response_sharing_state">0</span></td></tr>
+           <tr><td>self_registration_allowed</td><td><span id="self_registration_allowed">0</span></td></tr>
+           <tr><td>maximum_request_size</td><td><span id="maximum_request_size">0</span></td></tr>
+          </table>   
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
    <!-- END SUMMARY SECTION -->
    <!-- CLASSES SECTION -->
    <div id="classes" style="display:none;">
