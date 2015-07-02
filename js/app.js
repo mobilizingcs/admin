@@ -244,8 +244,8 @@ $(function() {
   function reloadData(fun){
     campaignSearch();
     classSearch();
-    userSearch();
-    auditRead(get15minutesago(), function(){
+    auditRead();
+    userSearch(get15minutesago(), function(){
       fun();
     })
   };
