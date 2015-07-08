@@ -23,6 +23,7 @@ function createAlertPopover(msg, is_bad){
   if (is_bad) { //ugh DRY this.
     $('html, body').animate({scrollTop: 0}, 200, function(){
     $("#alert-button")
+      .show()
       .popover('destroy')
       .popover({content: msg, title: title, container: 'body'})
       .css('color', color)
