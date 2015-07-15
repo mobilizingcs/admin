@@ -7,7 +7,7 @@ oh.callback("done", function(x, status, req){
 
 //global error handler. In ohmage 200 means unauthenticated
 oh.callback("error", function(msg, code, req){
-	(msg.match("token") || msg.match('Authentication credentials were not provided') || msg.match("New accounts aren't allowed to use this service")) ? window.location.replace("/login.html") : message(msg);
+	(msg.match("token") || msg.match('Authentication credentials were not provided') || msg.match("New accounts aren't allowed to use this service")) ? window.location.replace("/#login") : message(msg);
 });
 
 function message(msg, type){ //global message function to pass messages to user.
