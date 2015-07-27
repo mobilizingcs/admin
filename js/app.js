@@ -664,6 +664,7 @@ $(function() {
        "ordering": false,
        "filter": false,
        "info":     false,
+       "order": [[ 1, "asc" ]],
        "columns": [
         { "data": "checkbox"},
         { "data": "username"},
