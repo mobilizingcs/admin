@@ -661,7 +661,6 @@ $(function() {
           registerClassUserDetail();
         },
        "paging":   false,
-       "ordering": false,
        "filter": false,
        "info":     false,
        "order": [[ 1, "asc" ]],
