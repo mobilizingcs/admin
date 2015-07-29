@@ -366,13 +366,13 @@ $(function() {
     };
   };
   function registerUserDetail(){
-    $(".user-detail").on('click', function (e){
+    $("#user_table").on('click', '.user-detail', function (e){
       e.preventDefault();
       var username = $(this).data('username');
       var user_details = dtDataFromCell($(this), user_table);
       displayUserDetail(user_details);
     });
-    $(".user-delete").click(function(e){
+    $("#user_table").on('click', '.user-delete', function (e){
       e.preventDefault();
       var username = $(this).data('username');
       deleteUser(username);
@@ -548,13 +548,13 @@ $(function() {
     }
   }
   function registerClassDetail(){
-    $(".class-detail").on('click', function (e){
+    $("#class_table").on('click', '.class-detail', function (e){
       e.preventDefault();
       var urn = $(this).data('urn');
       var class_details = dtDataFromCell($(this), class_table);
       displayClassDetail(urn);
     });
-    $(".class-delete").click(function(e){
+    $("#class_table").on('click', '.class-delete', function (e){
       e.preventDefault();
       var urn = $(this).data('urn');
       deleteClass(urn);
@@ -680,14 +680,14 @@ $(function() {
     });
   }
   function registerClassUserDetail(){
-    $(".class-user-role").click(function(e){
+    $("#class_detail_table").on('click', '.class-user-role', function (e){
       e.preventDefault();
       var user_array = [];
       var new_role = $(this).text() == 'privileged' ? 'restricted' : 'privileged';
       user_array.push($(this).data('username'));
       bulkUserRole($("#class-detail-urn").val(), user_array, new_role);     
     })
-    $(".class-user-remove").click(function(e){
+    $("#class_detail_table").on('click', '.class-user-remove', function (e){
       e.preventDefault();
       var user_array = []
       user_array.push($(this).data('username'));
