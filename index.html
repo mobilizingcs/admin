@@ -47,6 +47,7 @@
      <li role="presentation"><a href="#" class="navs" >Classes</a></li>
      <li role="presentation"><a href="#" class="navs" >Users</a></li>
      <li role="presentation"><a href="#" class="navs" >Audits</a></li>
+     <li role="presentation"><a href="#" class="navs" >Rstudio</a></li>
    </ul>
  </div>
   <div class="col-md-10" id="main">
@@ -420,6 +421,60 @@
     </div> <!-- end row 2 (table) -->
    </div>
    <!-- END AUDITS SECTION -->
+   <!-- RSTUDIO2 SECTION -->
+   <div id="rstudio" style="display:none;">
+   <div class="row">
+     <div class="col-md-10">
+     <h2>Resetting Rstudio</h2>
+     </div>
+   </div>
+   <div class="row">
+	    <p> If a student can not login his Rstudio for some reason, you may use this tool to reset Rstudio session for this student. </p>
+        <p> Warning: This student may lose his current session after resetting his session. </p>
+        <p> Username: <input type="text" name="un1" id="un1"  value="lausd-XXXXX">		 </p>
+        <button onclick="myFunction1()">Reset Rstudio Now</button>
+		<p></p>
+		<p> If a student still can not login his Rstudio for some reason, you may use this tool to deep reset Rstudio session for this student. </p>
+		<p> Warning: This student may lose his current session and workspace data after deep resetting his session. </p>
+		<p> Username: <input type="text" name="un2" id="un2"  value="lausd-XXXXX">		 </p>
+		<button onclick="myFunction2()">Deep Reset Rstudio Now</button>
+        <p></p>
+		<p> If this tool still does not work for this student, please contact your supervisor and/or email support@mobilizingcs.org with necessary info</p>
+		
+		<script>
+		    function myFunction1() {
+				let d = new Date();
+				var injections= document.getElementById('un1').value;
+				alert("Today's date is " + d + "\n\nThe Rstudio will be reset for "+injections);
+				var xhttp = new XMLHttpRequest();
+				var getUrl = window.location;
+				xhttp.open("GET", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/whoami?client=xxx&device_id="+injections, true);
+				xhttp.send();
+			}
+		    function myFunction2() {
+				let d = new Date();
+				var injections= document.getElementById('un2').value;
+				alert("Today's date is " + d + "\n\nThe Rstudio will be deep reset for "+injections);
+				var xhttp = new XMLHttpRequest();
+				var getUrl = window.location;
+				xhttp.open("GET", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/whoami?client=xxxx&device_id="+injections, true);
+				xhttp.send();
+			}
+		</script>
+<!--     <table id="rstudio_table" class="display compact" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                <th>Time</th>
+                <th>URI</th>
+                <th>Status</th>
+                <th>User</th>
+                <th>Response Time (s)</th>
+              </tr>
+          </thead>
+      </table> -->
+    </div> <!-- end row 2 (table) -->
+   </div>
+   <!-- END RSTUDIO SECTION -->
  </div>
  </div> <!-- row? -->
 </div> <!-- end container -->
