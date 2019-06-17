@@ -281,7 +281,7 @@
                 <th></th>
                 <th>Username</th>
                 <th>First</th>
-                <th>Last</th>
+                <th>Last</th>t
                 <th>Org</th>
                 <th>ID</th>
                 <th>E-mail</th>
@@ -425,7 +425,7 @@
    <div id="rstudio" style="display:none;">
    <div class="row">
      <div class="col-md-10">
-     <h2>Resetting Rstudio</h2>
+     <h2>Reset Rstudio</h2>
      </div>
    </div>
    <div class="row">
@@ -440,6 +440,11 @@
 		<button onclick="myFunction2()">Deep Reset Rstudio Now</button>
         <p></p>
 		<p> If this tool still does not work for this student, please contact your supervisor and/or email support@mobilizingcs.org with necessary info</p>
+		<br>
+		<hr>
+		<br>
+		<button onclick="myFunction3(1,50)"  >Advanced: Reset guest1  ~ guest50  Accounts</button>
+		<button onclick="myFunction3(51,100)">Advanced: Reset guest51 ~ guest100 Accounts</button>
 		
 		<script>
 		    function myFunction1() {
@@ -459,6 +464,9 @@
 				var getUrl = window.location;
 				xhttp.open("GET", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/whoami?client=xxxx&device_id="+injections, true);
 				xhttp.send();
+			}
+		    function myFunction3(p1, p2) {
+			
 			}
 		</script>
 <!--     <table id="rstudio_table" class="display compact" cellspacing="0" width="100%">
