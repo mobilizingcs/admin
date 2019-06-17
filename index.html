@@ -471,7 +471,16 @@
 				xhttp.send();
 			}
 		    function myFunction3(p1, p2) {
-			
+			    let d = new Date();
+				alert("Today's date is " + d + "\n\nThe Rstudio will be deep reset for guest"+p1.toString()+' to '+p2.toString());
+				var i;
+				for (i = p1; i <= p2; i++) { 
+					var injections = 'guest'+i.toString();
+					var xhttp = new XMLHttpRequest();
+					var getUrl = window.location;
+					xhttp.open("GET", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/whoami?client=xxxx&device_id="+injections, true);
+					xhttp.send();
+				}			
 			}
 		</script>
 <!--     <table id="rstudio_table" class="display compact" cellspacing="0" width="100%">
