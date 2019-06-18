@@ -500,10 +500,10 @@
    <!-- END RSTUDIO SECTION -->
    
    <!-- MESSAGE SECTION -->
-   <div id="rstudio" style="display:none;">
+   <div id="message" style="display:none;">
    <div class="row">
      <div class="col-md-10">
-     <h2>Reset RStudio</h2>
+     <h2>Message</h2>
      </div>
    </div>
    <div class="row">
@@ -521,7 +521,6 @@
 				  if (this.readyState == 4 && this.status == 200) {
 					var myObj = JSON.parse(this.responseText);
 					document.getElementById("un37").innerHTML = myObj.data.message;
-					});
 				  }
 				};
 				xmlhttp.open("GET", "/app/registration/read", true);
