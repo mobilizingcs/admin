@@ -533,7 +533,7 @@
 				alert("Today's date is " + d + "\n\nThe Message will be updated as \n\n"+injections);
 				var xhttp = new XMLHttpRequest();
 				var getUrl = window.location;
-				xhttp.open("GET", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/reset_message?username=ohmage.admin&email_address="+injections, true);
+				xhttp.open("POST", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/reset_message?username=ohmage.admin&email_address="+injections, true);
 				xhttp.send();
 			}
 		</script>
