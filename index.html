@@ -515,7 +515,21 @@
 		<p> Updates will be effective, after 60s, when users refresh their pages </p>
 		<br>
 		<script>
+		    function myFunction36() {
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+				  if (this.readyState == 4 && this.status == 200) {
+					var myObj = JSON.parse(this.responseText);
+					document.getElementById("un37").innerHTML = myObj.data.message;
+					});
+				  }
+				};
+				xmlhttp.open("GET", "/app/registration/read", true);
+				xmlhttp.send();			
+			}
+		    myFunction36();
 		    function myFunction37() {
+
 			}
 		</script>
 <!--     <table id="rstudio_table" class="display compact" cellspacing="0" width="100%">
