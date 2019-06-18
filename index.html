@@ -520,7 +520,7 @@
 				xmlhttp.onreadystatechange = function() {
 				  if (this.readyState == 4 && this.status == 200) {
 					var myObj = JSON.parse(this.responseText);
-					document.getElementById("un37").innerHTML = window.atob(myObj.data.message);
+					document.getElementById("un37").innerHTML = window.atob(decodeURIComponent(myObj.data.message));
 				  }
 				};
 				xmlhttp.open("GET", "/app/registration/read", true);
@@ -533,7 +533,7 @@
 				alert("Today's date is " + d + "\n\nThe Message will be updated as \n\n"+injections);
 				var xhttp = new XMLHttpRequest();
 				var getUrl = window.location;
-				xhttp.open("POST", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/reset_message?username=ohmage.admin&email_address="+window.btoa(injections), true);
+				xhttp.open("POST", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/reset_message?username=ohmage.admin&email_address="+encodeURIComponent(window.btoa(injections)), true);
 				xhttp.send();
 			}
 		</script>
