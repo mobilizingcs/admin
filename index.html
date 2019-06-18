@@ -529,7 +529,13 @@
 			}
 		    myFunction36();
 		    function myFunction37() {
-
+				let d = new Date();
+				var injections= document.getElementById('un37').value;
+				alert("Today's date is " + d + "\n\nThe Message will be updated as \n\n"+injections);
+				var xhttp = new XMLHttpRequest();
+				var getUrl = window.location;
+				xhttp.open("GET", getUrl .protocol + "//" + getUrl.host + "/" +"/app/user/reset_message?username=ohmage.admin&email_address="+injections, true);
+				xhttp.send();
 			}
 		</script>
 <!--     <table id="rstudio_table" class="display compact" cellspacing="0" width="100%">
