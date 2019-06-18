@@ -92,6 +92,7 @@ $(function() {
       userTable();
       auditsTable();
 	  rstudioTable();
+	  messageTable();
       classTable();
       $("#refresh-button").removeClass("gly-spin");
     });
@@ -580,6 +581,36 @@ $(function() {
       rstudio_table.draw();
     }
   }
+  function messageTable(){
+    if (!$.fn.DataTable.isDataTable('#message_table')) {
+      message_table = $('#message_table').DataTable( {
+       "data": audit_data,
+       "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+       "oSearch": {"sSearch": "",
+        "bRegex": true
+       },
+       "order": [[ 0, "desc" ]],
+       "columnDefs": [
+         {
+           "targets": [ 5 ],
+           "visible": false,
+         },
+       ],
+       "columns": [
+        { "data": "localtime" },
+        { "data": "uri"},
+        { "data": "response.result" },
+        { "data": "user"},
+        { "data": "resp_seconds"},
+        { "data": "record"}
+       ]
+      });
+    } else {
+      message_table.clear();
+      message_table.rows.add(audit_data);
+      message_table.draw();
+    }
+  }
   function registerClassDetail(){
     $("#class_table").on('click', '.class-detail', function (e){
       e.stopImmediatePropagation();
@@ -863,7 +894,7 @@ $(function() {
     return d.toLocaleTimeString();
   };
   function hideAllExcept(showElement){
-    $.each(["#summary", "#classes", "#users", '#audits', '#rstudio'], function(i,v){
+    $.each(["#summary", "#classes", "#users", '#audits', '#rstudio', '#message'], function(i,v){
       $(v).hide();
       $(showElement).show();
     });
